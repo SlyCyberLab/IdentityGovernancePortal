@@ -1,0 +1,61 @@
+{
+  "snapshotMetadata": {
+    "snapshotDate": "2026-06-20",
+    "snapshotVersion": "1.0",
+    "tenantId": "your-tenant-id",
+    "tenantDomain": "slytech.us",
+    "collectedBy": "IdentityGovernancePortal"
+  },
+  "summary": {
+    "totalUsers": 10,
+    "activeUsers": 9,
+    "disabledUsers": 1,
+    "guestUsers": 0,
+    "privilegedUsers": 2,
+    "governanceScore": 85
+  },
+  "users": [
+    {
+      "id": "abc123",
+      "displayName": "Jordan Blake",
+      "userPrincipalName": "jblake@slytech.us",
+      "accountEnabled": false,
+      "userType": "Member",
+      "createdDateTime": "2025-01-15T10:00:00Z"
+    }
+  ],
+  "guestUsers": [
+    {
+      "id": "xyz789",
+      "displayName": "External User",
+      "userPrincipalName": "externaluser_gmail.com#EXT#@slytech.us",
+      "createdDateTime": "2026-05-01T08:00:00Z"
+    }
+  ],
+  "directoryRoles": [
+    {
+      "roleId": "20f26aa6-d3a2-49eb-8277-5f7ee8342192",
+      "roleName": "Global Administrator",
+      "members": [
+        {
+          "id": "abc123",
+          "displayName": "Sly Se",
+          "userPrincipalName": "admin@slytech.us"
+        }
+      ]
+    }
+  ],
+  "governanceObservations": [
+    {
+      "severity": "high",
+      "code": "DISABLED_USER_EXISTS",
+      "message": "1 disabled user account detected: jblake@slytech.us",
+      "affectedUsers": ["jblake@slytech.us"]
+    },
+    {
+      "severity": "info",
+      "code": "NO_GUEST_USERS",
+      "message": "No guest users detected in tenant."
+    }
+  ]
+}
