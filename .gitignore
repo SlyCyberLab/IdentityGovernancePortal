@@ -1,0 +1,9 @@
+﻿# Secrets
+.env
+*.env
+secrets.ps1
+local.settings.json
+
+# OS
+.DS_Store
+Thumbs.db
