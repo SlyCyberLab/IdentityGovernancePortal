@@ -1,0 +1,256 @@
+﻿{
+    "governanceObservations":  [
+                                   {
+                                       "message":  "2 disabled user account(s) detected.",
+                                       "code":  "DISABLED_USERS_EXIST",
+                                       "affectedUsers":  [
+                                                             "jblake@slytech.us",
+                                                             "tuser@slytech.us"
+                                                         ],
+                                       "severity":  "medium"
+                                   },
+                                   {
+                                       "message":  "No guest users detected in tenant.",
+                                       "code":  "NO_GUEST_USERS",
+                                       "severity":  "info"
+                                   }
+                               ],
+    "guestUsers":  [
+
+                   ],
+    "summary":  {
+                    "guestUsers":  0,
+                    "governanceScore":  90,
+                    "disabledUsers":  2,
+                    "activeUsers":  19,
+                    "privilegedUsers":  2,
+                    "totalUsers":  21
+                },
+    "users":  [
+                  {
+                      "id":  "43ff7e41-b629-433e-be8b-9b2ae78ee9fc",
+                      "displayName":  "Sly Se",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-07T22:47:50Z",
+                      "userPrincipalName":  "admin@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "8780b414-e314-42ba-854f-5247f3eafdc9",
+                      "displayName":  "Alice Johnson",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "ajohnson@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "3878dd2a-6257-450b-8226-43c05ad32373",
+                      "displayName":  "Bob Wilson",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "bwilson@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "87b22ba2-80b0-46cc-8a92-369d77429f5f",
+                      "displayName":  "Casey Novak (T2)",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "cnovak.admin.t2@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "6d9b1921-2d7d-445d-875b-1611012e272d",
+                      "displayName":  "Casey Novak",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "cnovak@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "802048fb-8ffd-43d9-a2d6-2f77f020f80d",
+                      "displayName":  "Diana Cruz (T2)",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "dcruz.admin.t2@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "9e9d397d-8eaa-4a51-821f-8dadd22bc159",
+                      "displayName":  "Diana Cruz",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "dcruz@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "595c4eb9-5e3b-4865-a8a7-34b65bd6c242",
+                      "displayName":  "Jordan Blake",
+                      "accountEnabled":  false,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "jblake@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "ad0bcb35-9ed8-4e46-9ab7-0698b6705554",
+                      "displayName":  "Jane Doe",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "jdoe@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "24cb67fd-c443-46b9-87b3-9a2e399aeeb3",
+                      "displayName":  "John Smith",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "jsmith@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "841e6007-7133-4350-804e-0f18c55c2b08",
+                      "displayName":  "Marcus Webb (T0)",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "mwebb.admin.t0@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "9ff29ddb-fed9-46f4-9db3-9867d88156d0",
+                      "displayName":  "Marcus Webb (T1)",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "mwebb.admin.t1@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "998e7019-241c-4616-b764-69fe90351c6c",
+                      "displayName":  "Marcus Webb",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "mwebb@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "9994746a-7373-4bc4-a455-fd7cda81f423",
+                      "displayName":  "Riley Holt (T0)",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "rholt.admin.t0@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "72af8d71-db2d-4d4c-aaf5-a523476fffef",
+                      "displayName":  "Riley Holt (T1)",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "rholt.admin.t1@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "b2dd005c-1e4f-4510-8187-c1aa97205a47",
+                      "displayName":  "Riley Holt",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "rholt@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "15c2036c-ef9b-41fd-aa4c-c59d2203f9f1",
+                      "displayName":  "Security Admin",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "secadmin@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "28bb0d88-5c29-42c3-af4d-15b82f176251",
+                      "displayName":  "Backup Service Account",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "svc.backup@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "8aef5e66-3d48-4987-b83b-e316736ea708",
+                      "displayName":  "Legacy Service Account",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:22:34Z",
+                      "userPrincipalName":  "svc.legacy@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "676ad270-2feb-40f6-ac0b-f215f1061ef1",
+                      "displayName":  "Sync Admin",
+                      "accountEnabled":  true,
+                      "createdDateTime":  "2026-06-08T01:07:48Z",
+                      "userPrincipalName":  "syncadmin@slytech.us",
+                      "userType":  "Member"
+                  },
+                  {
+                      "id":  "a4d4cab4-1d83-4541-939d-ee4dd35a43da",
+                      "displayName":  "Test User",
+                      "accountEnabled":  false,
+                      "createdDateTime":  "2026-06-18T17:36:24Z",
+                      "userPrincipalName":  "tuser@slytech.us",
+                      "userType":  "Member"
+                  }
+              ],
+    "snapshotMetadata":  {
+                             "tenantId":  "6f5c979b-2a52-4309-bcb8-02e039c8fcc6",
+                             "collectedBy":  "IdentityGovernancePortal",
+                             "snapshotVersion":  "1.0",
+                             "tenantDomain":  "slytech.us",
+                             "snapshotDate":  "2026-06-22"
+                         },
+    "directoryRoles":  [
+                           {
+                               "members":  [
+                                               {
+                                                   "displayName":  "Sly Se",
+                                                   "id":  "43ff7e41-b629-433e-be8b-9b2ae78ee9fc",
+                                                   "userPrincipalName":  "admin@slytech.us"
+                                               },
+                                               {
+                                                   "displayName":  "Sync Admin",
+                                                   "id":  "676ad270-2feb-40f6-ac0b-f215f1061ef1",
+                                                   "userPrincipalName":  "syncadmin@slytech.us"
+                                               }
+                                           ],
+                               "roleName":  "Global Administrator",
+                               "roleId":  "20f26aa6-d3a2-49eb-8277-5f7ee8342192"
+                           },
+                           {
+                               "members":  {
+
+                                           },
+                               "roleName":  "Billing Administrator",
+                               "roleId":  "7e29e829-4d2f-47e9-9424-f66bdebd2c1f"
+                           },
+                           {
+                               "members":  {
+
+                                           },
+                               "roleName":  "Directory Readers",
+                               "roleId":  "bdadd917-b22e-41b0-a6ef-9bd8243f2236"
+                           },
+                           {
+                               "members":  {
+                                               "displayName":  "Sly Se",
+                                               "id":  "43ff7e41-b629-433e-be8b-9b2ae78ee9fc",
+                                               "userPrincipalName":  "admin@slytech.us"
+                                           },
+                               "roleName":  "Security Administrator",
+                               "roleId":  "dc944e41-d032-4eb9-a7e4-600cf4097422"
+                           },
+                           {
+                               "members":  {
+                                               "displayName":  "Sly Se",
+                                               "id":  "43ff7e41-b629-433e-be8b-9b2ae78ee9fc",
+                                               "userPrincipalName":  "admin@slytech.us"
+                                           },
+                               "roleName":  "Global Reader",
+                               "roleId":  "f657b50b-e77e-4288-be1f-233917e248fe"
+                           }
+                       ]
+}
