@@ -33,7 +33,7 @@ Write-Host "`nToken acquired successfully." -ForegroundColor Green
 # --- Collect Users ---
 Write-Host "Collecting users..." -ForegroundColor Cyan
 $usersResponse = Invoke-RestMethod `
-    -Uri "https://graph.microsoft.com/v1.0/users?`$select=id,displayName,userPrincipalName,accountEnabled,createdDateTime,userType&`$top=999" `
+    -Uri "https://graph.microsoft.com/v1.0/users?`$select=id,displayName,userPrincipalName,accountEnabled,createdDateTime,userType,department,assignedLicenses&`$top=999" `
     -Headers $headers
 
 $allUsers   = $usersResponse.value
@@ -84,6 +84,10 @@ $score = 100
 if ($disabledUsers.Count -gt 0)      { $score -= 10 }
 if ($guestUsers.Count -gt 5)         { $score -= 10 }
 if ($uniquePrivilegedCount -gt 2)    { $score -= 20 }
+
+$disabledWithLicense = ($disabledUsers | Where-Object { $_.assignedLicenses.Count -gt 0 }).Count
+if ($disabledWithLicense -gt 0)      { $score -= $disabledWithLicense * 10 }
+
 if ($score -lt 0)                    { $score = 0 }
 
 Write-Host "  Governance score: $score" -ForegroundColor Yellow
@@ -97,6 +101,15 @@ if ($disabledUsers.Count -gt 0) {
         code         = "DISABLED_USERS_EXIST"
         message      = "$($disabledUsers.Count) disabled user account(s) detected."
         affectedUsers = @($disabledUsers | Select-Object -ExpandProperty userPrincipalName)
+    }
+}
+
+if ($disabledWithLicense -gt 0) {
+    $observations += @{
+        severity     = "high"
+        code         = "DISABLED_WITH_LICENSE"
+        message      = "$disabledWithLicense disabled user(s) still have active licenses."
+        affectedUsers = @($disabledUsers | Where-Object { $_.assignedLicenses.Count -gt 0 } | Select-Object -ExpandProperty userPrincipalName)
     }
 }
 
@@ -128,7 +141,7 @@ $snapshotDate = Get-Date -Format "yyyy-MM-dd"
 $snapshot = @{
     snapshotMetadata = @{
         snapshotDate    = $snapshotDate
-        snapshotVersion = "1.0"
+        snapshotVersion = "1.1"
         tenantId        = $tenantId
         tenantDomain    = "slytech.us"
         collectedBy     = "IdentityGovernancePortal"
@@ -149,6 +162,8 @@ $snapshot = @{
             accountEnabled    = $_.accountEnabled
             userType          = $_.userType
             createdDateTime   = $_.createdDateTime
+            department        = $_.department
+            hasLicense        = $_.assignedLicenses.Count -gt 0
         }
     })
     guestUsers     = @($guestUsers | ForEach-Object {
