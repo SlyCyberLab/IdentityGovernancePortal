@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identity Governance Portal | SlyTech</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:         #faf9f8;
+            --surface:    #ffffff;
+            --surface-2:  #f3f2f1;
+            --border:     #edebe9;
+            --border-2:   #e1dfdd;
+            --blue:       #0078d4;
+            --blue-dark:  #106ebe;
+            --blue-bg:    #deecf9;
+            --green:      #107c10;
+            --green-bg:   #dff6dd;
+            --orange:     #ca5010;
+            --orange-bg:  #fed9cc;
+            --red:        #d83b01;
+            --red-bg:     #fde7e9;
+            --text:       #323130;
+            --text-2:     #605e5c;
+            --text-3:     #8a8886;
+        }
+
+        body {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .top-strip { height: 4px; background: var(--blue); }
+
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+
+        .logo-squares {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .logo-squares span { background: var(--blue); }
+        .logo-squares span:nth-child(2) { background: #50e6ff; }
+        .logo-squares span:nth-child(3) { background: #ffb900; }
+        .logo-squares span:nth-child(4) { background: #d13438; }
+
+        .header-title { font-size: 14px; font-weight: 600; color: var(--text); }
+        .header-divider { width: 1px; height: 20px; background: var(--border-2); margin: 0 4px; }
+        .header-sub { font-size: 13px; color: var(--text-2); }
+
+        .header-right { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--text-2); }
+        .header-right .label { color: var(--text-3); }
+        .header-right .value { color: var(--text); font-weight: 600; margin-left: 6px; }
+
+        nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 16px;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-2);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.1s, border-color 0.1s;
+        }
+
+        .nav-btn:hover { color: var(--text); }
+        .nav-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+        main { max-width: 1280px; margin: 0 auto; padding: 24px; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .page-header { margin-bottom: 20px; }
+        .breadcrumb { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
+        .breadcrumb span { color: var(--text-2); }
+        .page-title { font-size: 20px; font-weight: 600; color: var(--text); }
+
+        /* Score + stats */
+        .top-row {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .score-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .score-ring-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
+        .score-ring-wrap svg { transform: rotate(-90deg); }
+
+        .score-number {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .score-meta-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+        .score-meta-title { font-size: 14px; font-weight: 600; color: var(--text); margin: 4px 0; }
+        .score-meta-desc { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
+        /* Stat grids */
+        .stat-grid-primary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .stat-grid-secondary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 16px 20px;
+            cursor: default;
+        }
+
+        .stat-card.clickable { cursor: pointer; transition: border-color 0.15s; }
+        .stat-card.clickable:hover { border-color: var(--blue); }
+
+        .stat-label { font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.1; }
+        .stat-foot { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+        .stat-link { font-size: 11px; color: var(--blue); margin-top: 6px; cursor: pointer; display: inline-block; }
+        .stat-link:hover { text-decoration: underline; }
+
+        /* Findings summary bar */
+        .findings-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .finding-cell {
+            padding: 14px 20px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+        }
+
+        .finding-cell:last-child { border-right: none; }
+
+        .finding-count {
+            font-size: 26px;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .finding-count.critical { color: var(--red); }
+        .finding-count.high     { color: var(--orange); }
+        .finding-count.medium   { color: #ca8a04; }
+        .finding-count.total    { color: var(--green); }
+
+        .finding-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-3);
+            margin-top: 4px;
+        }
+
+        /* Section */
+        .section { margin-bottom: 24px; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-count { font-size: 12px; color: var(--text-3); font-weight: 400; }
+
+        /* Filter pills */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-2);
+            background: var(--surface);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-pill:hover { border-color: var(--blue); color: var(--blue); }
+        .filter-pill.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+        .filter-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Observations */
+        .obs-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+
+        .obs-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--surface);
+            padding: 12px 16px;
+        }
+
+        .obs-item.hidden { display: none; }
+
+        .obs-icon { flex-shrink: 0; width: 16px; height: 16px; margin-top: 2px; }
+        .obs-icon.high   { color: var(--red); }
+        .obs-icon.medium { color: var(--orange); }
+        .obs-icon.info   { color: var(--blue); }
+
+        .obs-severity { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+        .obs-severity.high   { color: var(--red); }
+        .obs-severity.medium { color: var(--orange); }
+        .obs-severity.info   { color: var(--blue); }
+        .obs-message { font-size: 13px; color: var(--text); margin-top: 2px; line-height: 1.4; }
+
+        /* Table */
+        .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+
+        .table-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .toolbar-right { display: flex; align-items: center; gap: 8px; }
+
+        .table-count { font-size: 12px; color: var(--text-2); white-space: nowrap; }
+
+        .search-input {
+            background: var(--surface);
+            border: 1px solid var(--border-2);
+            border-radius: 2px;
+            padding: 6px 10px 6px 30px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text);
+            width: 240px;
+            outline: none;
+            transition: border-color 0.1s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238a8886' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 8px center;
+        }
+
+        .search-input:focus { border-color: var(--blue); }
+        .search-input::placeholder { color: var(--text-3); }
+
+        .view-toggle { display: flex; border: 1px solid var(--border-2); border-radius: 2px; overflow: hidden; }
+
+        .view-toggle-btn {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-family: inherit;
+            border: none;
+            background: var(--surface);
+            color: var(--text-2);
+            cursor: pointer;
+            border-right: 1px solid var(--border-2);
+            transition: all 0.1s;
+        }
+
+        .view-toggle-btn:last-child { border-right: none; }
+        .view-toggle-btn.active { background: var(--blue); color: white; }
+        .view-toggle-btn:hover:not(.active) { background: var(--surface-2); }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { border-bottom: 1px solid var(--border); background: var(--surface-2); }
+
+        th {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-2);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.05s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface-2); }
+
+        td { padding: 10px 16px; font-size: 13px; color: var(--text); }
+        td.secondary { color: var(--text-2); }
+        td.mono { font-family: "Cascadia Code", "Consolas", monospace; font-size: 12px; }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .badge.enabled .badge-dot  { background: var(--green); }
+        .badge.disabled .badge-dot { background: var(--orange); }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .tag.internal { background: var(--blue-bg); color: var(--blue); }
+        .tag.guest    { background: var(--orange-bg); color: var(--orange); }
+        .tag.yes      { background: var(--red-bg); color: var(--red); }
+        .tag.no       { background: var(--green-bg); color: var(--green); }
+
+        .severity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+
+        .severity-badge.critical { background: var(--red-bg); color: var(--red); }
+        .severity-badge.high     { background: var(--orange-bg); color: var(--orange); }
+        .severity-badge.medium   { background: #fef9c3; color: #854d0e; }
+        .severity-badge.info     { background: var(--blue-bg); color: var(--blue); }
+
+        /* Groups chips */
+        .group-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+
+        .group-chip {
+            background: var(--surface-2);
+            border: 1px solid var(--border-2);
+            border-radius: 2px;
+            padding: 1px 6px;
+            font-size: 11px;
+            color: var(--text-2);
+        }
+
+        /* Drift */
+        .drift-period {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: var(--text-2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .drift-period .date { color: var(--text); font-weight: 600; }
+        .drift-period .arrow { color: var(--text-3); }
+
+        .delta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .delta-value {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.1;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .delta-arrow { font-size: 14px; font-weight: 600; }
+        .delta-value.up-bad   { color: var(--red); }
+        .delta-value.up-good  { color: var(--green); }
+        .delta-value.down-bad { color: var(--red); }
+        .delta-value.neutral  { color: var(--text-2); }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .drift-list-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; }
+
+        .drift-list-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .drift-list-item {
+            padding: 10px 16px;
+            font-size: 13px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .drift-list-item:last-child { border-bottom: none; }
+
+        .drift-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .drift-indicator.add     { background: var(--green-bg); color: var(--green); }
+        .drift-indicator.warning { background: var(--orange-bg); color: var(--orange); }
+
+        .empty-state { padding: 20px 16px; font-size: 13px; color: var(--text-3); text-align: center; }
+
+        /* Privileged */
+        .role-grid { display: flex; flex-direction: column; gap: 12px; }
+
+        .role-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; }
+
+        .role-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface-2);
+        }
+
+        .role-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-name::before {
+            content: "";
+            width: 4px;
+            height: 16px;
+            background: var(--blue);
+            border-radius: 1px;
+        }
+
+        .role-count { font-size: 12px; color: var(--text-2); }
+
+        .member-row {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .member-row:last-child { border-bottom: none; }
+
+        .member-initials {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--blue-bg);
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .member-name { font-size: 13px; font-weight: 600; color: var(--text); }
+        .member-upn  { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+        .no-members  { padding: 14px 16px; font-size: 13px; color: var(--text-3); }
+    </style>
+</head>
+<body>
+
+<div class="top-strip"></div>
+
+<header>
+    <div class="header-left">
+        <div class="logo-squares">
+            <span></span><span></span><span></span><span></span>
+        </div>
+        <span class="header-title">Identity Governance Portal</span>
+        <div class="header-divider"></div>
+        <span class="header-sub">slytech.us</span>
+    </div>
+    <div class="header-right">
+        <span><span class="label">Snapshot:</span><span class="value" id="snapshotDate">Loading...</span></span>
+        <span><span class="label">Mode:</span><span class="value">Read-only</span></span>
+    </div>
+</header>
+
+<nav>
+    <button class="nav-btn active" onclick="showPage('overview', this)">Overview</button>
+    <button class="nav-btn" onclick="showPage('drift', this)">Drift Report</button>
+    <button class="nav-btn" onclick="showPage('privileged', this)">Privileged Access</button>
+    <button class="nav-btn" onclick="showPage('users', this)">All Users</button>
+    <button class="nav-btn" onclick="showPage('disabled', this)">Disabled Users</button>
+</nav>
+
+<main>
+
+    <!-- Overview -->
+    <div id="page-overview" class="page active">
+        <div class="page-header">
+            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Overview</span></div>
+            <div class="page-title">Identity overview</div>
+        </div>
+
+        <!-- Findings bar -->
+        <div class="findings-bar">
+            <div class="finding-cell">
+                <div class="finding-count critical" id="findingsCritical">0</div>
+                <div class="finding-label">Critical</div>
+            </div>
+            <div class="finding-cell">
+                <div class="finding-count high" id="findingsHigh">0</div>
+                <div class="finding-label">High</div>
+            </div>
+            <div class="finding-cell">
+                <div class="finding-count medium" id="findingsMedium">0</div>
+                <div class="finding-label">Medium</div>
+            </div>
+            <div class="finding-cell">
+                <div class="finding-count total" id="findingsTotal">0</div>
+                <div class="finding-label">Total Findings</div>
+            </div>
+        </div>
+
+        <!-- Score + primary stats -->
+        <div class="top-row" style="margin-bottom:12px;">
+            <div class="score-card">
+                <div class="score-ring-wrap">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="32" fill="none" stroke="#edebe9" stroke-width="6"/>
+                        <circle id="scoreRing" cx="40" cy="40" r="32" fill="none" stroke="#0078d4" stroke-width="6"
+                            stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"
+                            style="transition: stroke-dashoffset 0.8s ease"/>
+                    </svg>
+                    <div class="score-number" id="govScore">--</div>
+                </div>
+                <div>
+                    <div class="score-meta-label">Governance Score</div>
+                    <div class="score-meta-title" id="scoreTitle">Calculating...</div>
+                    <div class="score-meta-desc" id="scoreDesc">Loading posture data...</div>
+                </div>
+            </div>
+
+            <div class="stat-grid-primary">
+                <div class="stat-card">
+                    <div class="stat-label">Total users</div>
+                    <div class="stat-value" id="totalUsers">--</div>
+                    <div class="stat-foot">In directory</div>
+                </div>
+                <div class="stat-card clickable" onclick="showPage('disabled', document.querySelectorAll('.nav-btn')[4])">
+                    <div class="stat-label">Disabled accounts</div>
+                    <div class="stat-value" style="color:var(--orange)" id="disabledUsers">--</div>
+                    <div class="stat-foot">Accounts</div>
+                    <div class="stat-link">View disabled users →</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Licensed users</div>
+                    <div class="stat-value" style="color:var(--blue)" id="licensedUsers">--</div>
+                    <div class="stat-foot">Active licenses</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary stats -->
+        <div class="stat-grid-secondary" style="margin-bottom:24px;">
+            <div class="stat-card">
+                <div class="stat-label">Active</div>
+                <div class="stat-value" style="color:var(--green)" id="activeUsers">--</div>
+                <div class="stat-foot">Enabled accounts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Internal</div>
+                <div class="stat-value" id="internalUsers">--</div>
+                <div class="stat-foot">Member accounts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Guests</div>
+                <div class="stat-value" id="guestUsers">--</div>
+                <div class="stat-foot">External users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Privileged</div>
+                <div class="stat-value" style="color:var(--red)" id="privilegedUsers">--</div>
+                <div class="stat-foot">Role assignments</div>
+            </div>
+        </div>
+
+        <!-- Observations -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    Governance observations
+                    <span class="section-count" id="obsCount"></span>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-pill active" onclick="filterObs('all', this)">All</button>
+                <button class="filter-pill" onclick="filterObs('high', this)">
+                    <span class="filter-dot" style="background:var(--red)"></span>High
+                </button>
+                <button class="filter-pill" onclick="filterObs('medium', this)">
+                    <span class="filter-dot" style="background:var(--orange)"></span>Medium
+                </button>
+                <button class="filter-pill" onclick="filterObs('info', this)">
+                    <span class="filter-dot" style="background:var(--blue)"></span>Info
+                </button>
+            </div>
+
+            <div class="obs-list" id="observations"></div>
+        </div>
+    </div>
+
+    <!-- Drift -->
+    <div id="page-drift" class="page">
+        <div class="page-header">
+            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Drift Report</span></div>
+            <div class="page-title">Drift report</div>
+        </div>
+
+        <div class="drift-period" id="driftPeriod">Loading...</div>
+
+        <div class="delta-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total users</div>
+                <div class="delta-value" id="deltaTotalUsers">--</div>
+                <div class="stat-foot">Week-over-week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Disabled</div>
+                <div class="delta-value" id="deltaDisabled">--</div>
+                <div class="stat-foot">Week-over-week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Guests</div>
+                <div class="delta-value" id="deltaGuests">--</div>
+                <div class="stat-foot">Week-over-week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Governance score</div>
+                <div class="delta-value" id="deltaScore">--</div>
+                <div class="stat-foot">Week-over-week</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Drift observations <span class="section-count" id="driftObsCount"></span></div>
+            </div>
+            <div class="obs-list" id="driftObservations"></div>
+        </div>
+
+        <div class="two-col">
+            <div class="drift-list-card">
+                <div class="drift-list-header">New users this period</div>
+                <div id="newUsersList"></div>
+            </div>
+            <div class="drift-list-card">
+                <div class="drift-list-header">Newly disabled this period</div>
+                <div id="newlyDisabledList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privileged Access -->
+    <div id="page-privileged" class="page">
+        <div class="page-header">
+            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Privileged Access</span></div>
+            <div class="page-title">Privileged access</div>
+        </div>
+        <div class="role-grid" id="privilegedRoles"></div>
+    </div>
+
+    <!-- All Users -->
+    <div id="page-users" class="page">
+        <div class="page-header">
+            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>All Users</span></div>
+            <div class="page-title">All users</div>
+        </div>
+        <div class="table-wrap">
+            <div class="table-toolbar">
+                <div class="toolbar-left">
+                    <span class="table-count" id="userCount">Loading...</span>
+                    <div class="view-toggle">
+                        <button class="view-toggle-btn active" onclick="setUserView('all', this)">All Users</button>
+                        <button class="view-toggle-btn" onclick="setUserView('internal', this)">Internal</button>
+                        <button class="view-toggle-btn" onclick="setUserView('guests', this)">Guests</button>
+                    </div>
+                </div>
+                <div class="toolbar-right">
+                    <input class="search-input" type="text" id="searchInput"
+                        placeholder="Search name or UPN..." oninput="filterUsers()"/>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Display name</th>
+                        <th>User principal name</th>
+                        <th>Type</th>
+                        <th>Department</th>
+                        <th>License</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Disabled Users -->
+    <div id="page-disabled" class="page">
+        <div class="page-header">
+            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Disabled Users</span></div>
+            <div class="page-title">Disabled users</div>
+        </div>
+
+        <!-- Disabled summary stats -->
+        <div class="stat-grid-secondary" style="margin-bottom:24px;">
+            <div class="stat-card">
+                <div class="stat-label">Total disabled</div>
+                <div class="stat-value" style="color:var(--orange)" id="disabledTotal">--</div>
+                <div class="stat-foot">Accounts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Disabled with license</div>
+                <div class="stat-value" style="color:var(--red)" id="disabledWithLicense">--</div>
+                <div class="stat-foot">Active license waste</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Disabled internal</div>
+                <div class="stat-value" id="disabledInternal">--</div>
+                <div class="stat-foot">Member accounts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Disabled guests</div>
+                <div class="stat-value" id="disabledGuests">--</div>
+                <div class="stat-foot">External accounts</div>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-toolbar">
+                <div class="toolbar-left">
+                    <span class="table-count" id="disabledCount">Loading...</span>
+                    <div class="filter-bar" style="margin:0;">
+                        <button class="filter-pill active" onclick="filterDisabled('all', this)">All</button>
+                        <button class="filter-pill" onclick="filterDisabled('licensed', this)">
+                            <span class="filter-dot" style="background:var(--red)"></span>Has License
+                        </button>
+                        <button class="filter-pill" onclick="filterDisabled('internal', this)">
+                            <span class="filter-dot" style="background:var(--blue)"></span>Internal
+                        </button>
+                        <button class="filter-pill" onclick="filterDisabled('guest', this)">
+                            <span class="filter-dot" style="background:var(--orange)"></span>Guest
+                        </button>
+                    </div>
+                </div>
+                <div class="toolbar-right">
+                    <input class="search-input" type="text" id="disabledSearch"
+                        placeholder="Search disabled users..." oninput="searchDisabled()"/>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Severity</th>
+                        <th>Display name</th>
+                        <th>UPN</th>
+                        <th>Type</th>
+                        <th>Department</th>
+                        <th>License</th>
+                        <th>Issue</th>
+                    </tr>
+                </thead>
+                <tbody id="disabledTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    let snapshotData  = null
+    let driftData     = null
+    let allUsers      = []
+    let disabledUsers = []
+    let currentUserView    = 'all'
+    let currentDisabledFilter = 'all'
+
+    async function loadData() {
+        try {
+            const snapRes  = await fetch('http://localhost:3000/snapshots/sample/identity-snapshot-2026-06-23.json')
+            const driftRes = await fetch('http://localhost:3000/snapshots/sample/drift-report-2026-06-22.json')
+            snapshotData  = await snapRes.json()
+            driftData     = await driftRes.json()
+            allUsers      = snapshotData.users
+            disabledUsers = allUsers.filter(u => !u.accountEnabled)
+            renderOverview()
+            renderDrift()
+            renderPrivileged()
+            renderUsers()
+            renderDisabled()
+        } catch (err) {
+            console.error('Load failed:', err)
+            document.getElementById('snapshotDate').textContent = 'Error'
+        }
+    }
+
+    /* ── OVERVIEW ── */
+    function renderOverview() {
+        const s = snapshotData
+        document.getElementById('snapshotDate').textContent = s.snapshotMetadata.snapshotDate
+
+        const licensed    = allUsers.filter(u => u.hasLicense).length
+        const internal    = allUsers.filter(u => u.userType === 'Member').length
+        const guests      = allUsers.filter(u => u.userType === 'Guest').length
+
+        document.getElementById('totalUsers').textContent      = s.summary.totalUsers
+        document.getElementById('activeUsers').textContent     = s.summary.activeUsers
+        document.getElementById('disabledUsers').textContent   = s.summary.disabledUsers
+        document.getElementById('guestUsers').textContent      = guests
+        document.getElementById('internalUsers').textContent   = internal
+        document.getElementById('privilegedUsers').textContent = s.summary.privilegedUsers
+        document.getElementById('licensedUsers').textContent   = licensed
+
+        const score = s.summary.governanceScore
+        document.getElementById('govScore').textContent = score
+
+        const ring   = document.getElementById('scoreRing')
+        const offset = 201 - (201 * score / 100)
+        setTimeout(() => { ring.style.strokeDashoffset = offset }, 100)
+
+        const ringColor = score >= 80 ? '#107c10' : score >= 60 ? '#ca5010' : '#d83b01'
+        ring.style.stroke = ringColor
+        document.getElementById('govScore').style.color = ringColor
+
+        document.getElementById('scoreTitle').textContent = score >= 80 ? 'Healthy posture' : score >= 60 ? 'Moderate risk' : 'High risk'
+        document.getElementById('scoreDesc').textContent  = score >= 80
+            ? 'No critical findings detected in this snapshot.'
+            : score >= 60 ? 'Review flagged observations and remediate.'
+            : 'Immediate attention required on flagged items.'
+
+        const obs = s.governanceObservations
+        const critical = obs.filter(o => o.severity === 'high' || o.severity === 'critical').length
+        const high     = obs.filter(o => o.severity === 'high').length
+        const medium   = obs.filter(o => o.severity === 'medium').length
+
+        document.getElementById('findingsCritical').textContent = critical
+        document.getElementById('findingsHigh').textContent     = high
+        document.getElementById('findingsMedium').textContent   = medium
+        document.getElementById('findingsTotal').textContent    = obs.length
+        document.getElementById('obsCount').textContent         = '(' + obs.length + ')'
+
+        renderObservations(obs, 'all')
+    }
+
+    function renderObservations(obs, filter) {
+        const el = document.getElementById('observations')
+        el.innerHTML = obs.map(o => {
+            const hidden = filter !== 'all' && o.severity !== filter ? ' hidden' : ''
+            const iconSvg = o.severity === 'high'
+                ? '<svg class="obs-icon high" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>'
+                : o.severity === 'medium'
+                ? '<svg class="obs-icon medium" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>'
+                : '<svg class="obs-icon info" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 7v5M8 4v1"/></svg>'
+            return '<div class="obs-item' + hidden + '" data-severity="' + o.severity + '">' +
+                iconSvg +
+                '<div class="obs-body">' +
+                    '<div class="obs-severity ' + o.severity + '">' + o.severity + '</div>' +
+                    '<div class="obs-message">' + o.message + '</div>' +
+                '</div></div>'
+        }).join('')
+    }
+
+    function filterObs(severity, btn) {
+        document.querySelectorAll('.filter-bar .filter-pill').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        document.querySelectorAll('#observations .obs-item').forEach(el => {
+            el.classList.toggle('hidden', severity !== 'all' && el.dataset.severity !== severity)
+        })
+    }
+
+    /* ── ALL USERS ── */
+    function renderUsers() { renderUserTable(applyUserView(allUsers)) }
+
+    function applyUserView(users) {
+        if (currentUserView === 'internal') return users.filter(u => u.userType === 'Member')
+        if (currentUserView === 'guests')   return users.filter(u => u.userType === 'Guest')
+        return users
+    }
+
+    function setUserView(view, btn) {
+        currentUserView = view
+        document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        document.getElementById('searchInput').value = ''
+        renderUserTable(applyUserView(allUsers))
+    }
+
+    function filterUsers() {
+        const q = document.getElementById('searchInput').value.toLowerCase()
+        renderUserTable(applyUserView(allUsers).filter(u =>
+            u.displayName.toLowerCase().includes(q) ||
+            u.userPrincipalName.toLowerCase().includes(q)
+        ))
+    }
+
+    function renderUserTable(users) {
+        document.getElementById('userCount').textContent = 'Showing ' + users.length + ' user' + (users.length !== 1 ? 's' : '')
+        document.getElementById('userTable').innerHTML = users.map(u => {
+            const statusCls  = u.accountEnabled ? 'enabled' : 'disabled'
+            const statusTxt  = u.accountEnabled ? 'Enabled' : 'Disabled'
+            const typeCls    = u.userType === 'Guest' ? 'guest' : 'internal'
+            const licenseCls = u.hasLicense ? 'yes' : 'no'
+            const licenseTxt = u.hasLicense ? 'Licensed' : 'None'
+            const date       = u.createdDateTime ? u.createdDateTime.split('T')[0] : 'N/A'
+            const dept       = u.department || '<span style="color:var(--text-3)">—</span>'
+            return '<tr>' +
+                '<td>' + u.displayName + '</td>' +
+                '<td class="mono secondary">' + u.userPrincipalName + '</td>' +
+                '<td><span class="tag ' + typeCls + '">' + u.userType + '</span></td>' +
+                '<td class="secondary">' + dept + '</td>' +
+                '<td><span class="tag ' + licenseCls + '">' + licenseTxt + '</span></td>' +
+                '<td><span class="badge ' + statusCls + '"><span class="badge-dot"></span>' + statusTxt + '</span></td>' +
+                '<td class="secondary">' + date + '</td>' +
+                '</tr>'
+        }).join('')
+    }
+
+    /* ── DISABLED USERS ── */
+    function renderDisabled() {
+        const disabled = allUsers.filter(u => !u.accountEnabled)
+        const withLic  = disabled.filter(u => u.hasLicense).length
+        const internal = disabled.filter(u => u.userType === 'Member').length
+        const guests   = disabled.filter(u => u.userType === 'Guest').length
+
+        document.getElementById('disabledTotal').textContent       = disabled.length
+        document.getElementById('disabledWithLicense').textContent = withLic
+        document.getElementById('disabledInternal').textContent    = internal
+        document.getElementById('disabledGuests').textContent      = guests
+
+        renderDisabledTable(disabled)
+    }
+
+    function getDisabledSeverity(u) {
+        if (!u.accountEnabled && u.hasLicense) return 'critical'
+        if (!u.accountEnabled && u.userType === 'Member') return 'high'
+        return 'medium'
+    }
+
+    function getDisabledIssue(u) {
+        if (u.hasLicense) return 'Disabled account retains active license'
+        if (u.userType === 'Member') return 'Disabled internal account'
+        return 'Disabled guest account'
+    }
+
+    function renderDisabledTable(users) {
+        document.getElementById('disabledCount').textContent = 'Showing ' + users.length + ' disabled user' + (users.length !== 1 ? 's' : '')
+        document.getElementById('disabledTable').innerHTML = users.map(u => {
+            const sev     = getDisabledSeverity(u)
+            const issue   = getDisabledIssue(u)
+            const typeCls = u.userType === 'Guest' ? 'guest' : 'internal'
+            const licCls  = u.hasLicense ? 'yes' : 'no'
+            const licTxt  = u.hasLicense ? 'Licensed' : 'None'
+            const dept    = u.department || '<span style="color:var(--text-3)">—</span>'
+            return '<tr>' +
+                '<td><span class="severity-badge ' + sev + '">' + sev.toUpperCase() + '</span></td>' +
+                '<td>' + u.displayName + '</td>' +
+                '<td class="mono secondary">' + u.userPrincipalName + '</td>' +
+                '<td><span class="tag ' + typeCls + '">' + u.userType + '</span></td>' +
+                '<td class="secondary">' + dept + '</td>' +
+                '<td><span class="tag ' + licCls + '">' + licTxt + '</span></td>' +
+                '<td class="secondary" style="color:var(--text)">' + issue + '</td>' +
+                '</tr>'
+        }).join('')
+    }
+
+    function filterDisabled(filter, btn) {
+        currentDisabledFilter = filter
+        document.querySelectorAll('#page-disabled .filter-pill').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        document.getElementById('disabledSearch').value = ''
+        applyDisabledFilter()
+    }
+
+    function searchDisabled() {
+        applyDisabledFilter()
+    }
+
+    function applyDisabledFilter() {
+        const q      = document.getElementById('disabledSearch').value.toLowerCase()
+        let filtered = allUsers.filter(u => !u.accountEnabled)
+
+        if (currentDisabledFilter === 'licensed') filtered = filtered.filter(u => u.hasLicense)
+        if (currentDisabledFilter === 'internal') filtered = filtered.filter(u => u.userType === 'Member')
+        if (currentDisabledFilter === 'guest')    filtered = filtered.filter(u => u.userType === 'Guest')
+
+        if (q) filtered = filtered.filter(u =>
+            u.displayName.toLowerCase().includes(q) ||
+            u.userPrincipalName.toLowerCase().includes(q)
+        )
+
+        renderDisabledTable(filtered)
+    }
+
+    /* ── DRIFT ── */
+    function renderDrift() {
+        const d    = driftData
+        const prev = d.reportMetadata.previousSnapshot.replace('identity-snapshot-','').replace('.json','')
+        const curr = d.reportMetadata.currentSnapshot.replace('identity-snapshot-','').replace('.json','')
+
+        document.getElementById('driftPeriod').innerHTML =
+            'Period: <span class="date">' + prev + '</span><span class="arrow"> → </span><span class="date">' + curr + '</span>'
+
+        function fmt(n) { return (n > 0 ? '+' : '') + n }
+        function arrowFor(n) { return n > 0 ? '↑' : n < 0 ? '↓' : '' }
+        function deltaClass(v, hib) {
+            if (v === 0) return 'neutral'
+            if (hib) return v > 0 ? 'up-bad' : 'up-good'
+            return v > 0 ? 'up-good' : 'down-bad'
+        }
+
+        const sd = d.summaryDelta
+        const fields = [
+            { id: 'deltaTotalUsers', v: sd.totalUsers,      hib: false },
+            { id: 'deltaDisabled',   v: sd.disabledUsers,    hib: true  },
+            { id: 'deltaGuests',     v: sd.guestUsers,       hib: true  },
+            { id: 'deltaScore',      v: sd.governanceScore,  hib: false },
+        ]
+
+        fields.forEach(f => {
+            const el    = document.getElementById(f.id)
+            const arrow = arrowFor(f.v)
+            el.innerHTML = fmt(f.v) + (arrow ? ' <span class="delta-arrow">' + arrow + '</span>' : '')
+            el.className = 'delta-value ' + deltaClass(f.v, f.hib)
+        })
+
+        const obs = d.driftObservations
+        document.getElementById('driftObsCount').textContent = '(' + obs.length + ')'
+        document.getElementById('driftObservations').innerHTML = obs.map(o => {
+            const iconSvg = '<svg class="obs-icon ' + o.severity + '" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>'
+            return '<div class="obs-item">' + iconSvg +
+                '<div class="obs-body">' +
+                    '<div class="obs-severity ' + o.severity + '">' + o.severity + '</div>' +
+                    '<div class="obs-message">' + o.message + '</div>' +
+                '</div></div>'
+        }).join('')
+
+        document.getElementById('newUsersList').innerHTML = d.userDelta.newUsers.length
+            ? d.userDelta.newUsers.map(u =>
+                '<div class="drift-list-item"><div class="drift-indicator add">+</div>' + u + '</div>').join('')
+            : '<div class="empty-state">No new users this period</div>'
+
+        document.getElementById('newlyDisabledList').innerHTML = d.userDelta.newlyDisabled.length
+            ? d.userDelta.newlyDisabled.map(u =>
+                '<div class="drift-list-item"><div class="drift-indicator warning">!</div>' + u + '</div>').join('')
+            : '<div class="empty-state">No newly disabled accounts</div>'
+    }
+
+    /* ── PRIVILEGED ── */
+    function renderPrivileged() {
+        const initials = n => n ? n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() : '?'
+        document.getElementById('privilegedRoles').innerHTML = snapshotData.directoryRoles.map(role => {
+            const members      = Array.isArray(role.members) ? role.members : [role.members]
+            const validMembers = members.filter(m => m && m.userPrincipalName)
+            return '<div class="role-card">' +
+                '<div class="role-header">' +
+                    '<div class="role-name">' + role.roleName + '</div>' +
+                    '<div class="role-count">' + validMembers.length + ' member' + (validMembers.length !== 1 ? 's' : '') + '</div>' +
+                '</div>' +
+                (validMembers.length > 0
+                    ? validMembers.map(m =>
+                        '<div class="member-row">' +
+                            '<div class="member-initials">' + initials(m.displayName) + '</div>' +
+                            '<div>' +
+                                '<div class="member-name">' + m.displayName + '</div>' +
+                                '<div class="member-upn">' + m.userPrincipalName + '</div>' +
+                            '</div>' +
+                        '</div>').join('')
+                    : '<div class="no-members">No members assigned</div>'
+                ) + '</div>'
+        }).join('')
+    }
+
+    /* ── NAV ── */
+    function showPage(page, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'))
+        document.getElementById('page-' + page).classList.add('active')
+        if (btn) btn.classList.add('active')
+    }
+
+    loadData()
+</script>
+
+</body>
+</html>
