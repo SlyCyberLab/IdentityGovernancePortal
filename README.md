@@ -25,22 +25,7 @@ Most identity automation projects stop at provisioning and deprovisioning. This 
 ---
 
 ## Architecture
-
-```
-Microsoft Graph API
-        │
-        ▼
-PowerShell Snapshot Collector (Get-IdentitySnapshot.ps1)
-        │
-        ▼
-Azure Blob Storage ── snapshots/YYYY-MM-DD/identity-snapshot.json
-        │
-        ▼
-Drift Detection Engine (Compare-IdentitySnapshots.ps1)
-        │
-        ▼
-Azure Static Web App Dashboard (dashboard/index.html)
-```
+![Architecture](screenshots/00-architecture-diagram.png)
 
 **Design principles:**
 - Read-only, no remediation actions
