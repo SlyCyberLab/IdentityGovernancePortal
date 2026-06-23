@@ -1,0 +1,63 @@
+﻿{
+    "privilegedAccessDelta":  {
+                                  "removedPrivilegedAssignments":  [
+
+                                                                   ],
+                                  "newPrivilegedAssignments":  [
+
+                                                               ]
+                              },
+    "userDelta":  {
+                      "newlyDisabled":  [
+                                            "tuser@slytech.us"
+                                        ],
+                      "newUsers":  [
+                                       "tuser@slytech.us"
+                                   ],
+                      "removedUsers":  [
+
+                                       ],
+                      "reEnabledUsers":  [
+
+                                         ]
+                  },
+    "reportMetadata":  {
+                           "previousSnapshot":  "identity-snapshot-2026-06-15.json",
+                           "generatedAt":  "2026-06-22T21:37:27Z",
+                           "currentSnapshot":  "identity-snapshot-2026-06-22.json"
+                       },
+    "driftObservations":  [
+                              {
+                                  "message":  "1 account(s) newly disabled since last scan.",
+                                  "code":  "ACCOUNTS_NEWLY_DISABLED",
+                                  "details":  [
+                                                  "tuser@slytech.us"
+                                              ],
+                                  "severity":  "medium"
+                              },
+                              {
+                                  "message":  "1 new user(s) added since last scan.",
+                                  "code":  "NEW_USERS_ADDED",
+                                  "details":  [
+                                                  "tuser@slytech.us"
+                                              ],
+                                  "severity":  "info"
+                              }
+                          ],
+    "summaryDelta":  {
+                         "guestUsers":  0,
+                         "governanceScore":  0,
+                         "disabledUsers":  1,
+                         "activeUsers":  0,
+                         "privilegedUsers":  0,
+                         "totalUsers":  1
+                     },
+    "guestDelta":  {
+                       "newGuests":  [
+
+                                     ],
+                       "removedGuests":  [
+
+                                         ]
+                   }
+}
