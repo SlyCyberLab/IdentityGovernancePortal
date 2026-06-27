@@ -262,6 +262,57 @@
         .copilot-hint { font-size: 10px; color: var(--text-3); margin-top: 6px; text-align: center; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { animation: spin 1s linear infinite; }
+        /* Executive health bar */
+        .exec-health-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; margin-bottom: 24px; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+        .exec-health-cell { padding: 14px 16px; background: var(--surface); border-right: 1px solid var(--border); }
+        .exec-health-cell:last-child { border-right: none; }
+        .exec-health-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 6px; }
+        .exec-health-value { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.1; }
+        .exec-health-value.healthy { color: var(--green); }
+        .exec-health-value.warning { color: var(--orange); }
+        .exec-health-value.critical { color: var(--red); }
+        .exec-health-value.blue { color: var(--blue); }
+        .exec-health-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+        /* Compliance page */
+        .compliance-score-bar { display: grid; grid-template-columns: 200px 1fr; gap: 24px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 2px; padding: 20px 24px; margin-bottom: 24px; }
+        .compliance-score-main { }
+        .compliance-score-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 6px; }
+        .compliance-score-number { font-size: 36px; font-weight: 700; color: var(--text); line-height: 1; }
+        .compliance-score-number span { font-size: 16px; color: var(--text-3); font-weight: 400; }
+        .compliance-score-desc { font-size: 12px; color: var(--text-2); margin-top: 6px; }
+        .compliance-progress { }
+        .compliance-progress-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .compliance-progress-fill { height: 100%; border-radius: 4px; background: var(--green); transition: width 0.8s ease; }
+        .compliance-progress-fill.warning { background: var(--orange); }
+        .compliance-progress-fill.critical { background: var(--red); }
+        .compliance-progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); }
+        .compliance-grid { display: flex; flex-direction: column; gap: 12px; }
+        .compliance-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+        .compliance-card-header { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+        .compliance-card-left { display: flex; align-items: center; gap: 12px; }
+        .compliance-status-icon { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+        .compliance-status-icon.pass { background: var(--green-bg); color: var(--green); }
+        .compliance-status-icon.fail { background: var(--red-bg); color: var(--red); }
+        .compliance-status-icon.warn { background: var(--orange-bg); color: var(--orange); }
+        .compliance-status-icon.unknown { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); }
+        .compliance-control-name { font-size: 13px; font-weight: 600; color: var(--text); }
+        .compliance-status-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 2px; }
+        .compliance-status-badge.pass { background: var(--green-bg); color: var(--green); }
+        .compliance-status-badge.fail { background: var(--red-bg); color: var(--red); }
+        .compliance-status-badge.warn { background: var(--orange-bg); color: var(--orange); }
+        .compliance-status-badge.unknown { background: var(--surface-2); color: var(--text-3); }
+        .compliance-card-body { padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .compliance-body-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 6px; }
+        .compliance-body-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+        .compliance-mappings { display: flex; flex-wrap: wrap; gap: 4px; }
+        .compliance-tag { display: inline-block; padding: 2px 7px; border-radius: 2px; font-size: 10px; font-weight: 600; }
+        .compliance-tag.cis { background: #fef3c7; color: #92400e; }
+        .compliance-tag.nist { background: #ede9fe; color: #5b21b6; }
+        .compliance-tag.iso { background: #dbeafe; color: #1e40af; }
+        .compliance-tag.ms { background: var(--blue-bg); color: var(--blue); }
+        .compliance-note { margin-top: 16px; padding: 12px 16px; background: var(--blue-bg); border: 1px solid #b3d6f4; border-radius: 2px; font-size: 12px; color: var(--blue); }
+
     </style>
 </head>
 <body>
@@ -285,12 +336,46 @@
     <button class="nav-btn" onclick="showPage('users', this)">All Users</button>
     <button class="nav-btn" onclick="showPage('disabled', this)">Disabled Users</button>
     <button class="nav-btn" onclick="showPage('trends', this)">Trends</button>
+    <button class="nav-btn" onclick="showPage('compliance', this)">Compliance</button>
 </nav>
 <main id="mainContent">
     <div id="page-overview" class="page active">
         <div class="page-header">
             <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Overview</span></div>
             <div class="page-title">Identity overview</div>
+        </div>
+        <!-- Executive Health Bar -->
+        <div class="exec-health-bar">
+            <div class="exec-health-cell">
+                <div class="exec-health-label">Identity Health</div>
+                <div class="exec-health-value healthy" id="execHealthStatus">--</div>
+                <div class="exec-health-sub">Overall posture</div>
+            </div>
+            <div class="exec-health-cell">
+                <div class="exec-health-label">Governance Score</div>
+                <div class="exec-health-value blue" id="execScore">--</div>
+                <div class="exec-health-sub">Out of 100</div>
+            </div>
+            <div class="exec-health-cell">
+                <div class="exec-health-label">Critical Findings</div>
+                <div class="exec-health-value" id="execCritical">--</div>
+                <div class="exec-health-sub">Require action</div>
+            </div>
+            <div class="exec-health-cell">
+                <div class="exec-health-label">Weekly Change</div>
+                <div class="exec-health-value" id="execWeeklyChange">--</div>
+                <div class="exec-health-sub">User delta</div>
+            </div>
+            <div class="exec-health-cell">
+                <div class="exec-health-label">License Waste</div>
+                <div class="exec-health-value warning" id="execLicenseWaste">--</div>
+                <div class="exec-health-sub">Est. per month</div>
+            </div>
+            <div class="exec-health-cell">
+                <div class="exec-health-label">Highest Risk</div>
+                <div class="exec-health-value critical" style="font-size:12px;line-height:1.3;" id="execHighestRisk">--</div>
+                <div class="exec-health-sub" id="execHighestRiskSub"></div>
+            </div>
         </div>
         <div class="findings-bar">
             <div class="finding-cell" onclick="filterObs('critical')"><div class="finding-count critical" id="findingsCritical">0</div><div class="finding-label">Critical</div></div>
@@ -433,6 +518,40 @@
             <div class="chart-card"><div class="chart-title">Privileged Accounts</div><div class="chart-wrap"><canvas id="chartPrivileged"></canvas></div></div>
         </div>
     </div>
+
+    <!-- Compliance -->
+    <div id="page-compliance" class="page">
+        <div class="page-header">
+            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Compliance</span></div>
+            <div class="page-title">Compliance controls</div>
+        </div>
+
+        <div class="compliance-score-bar">
+            <div class="compliance-score-main">
+                <div class="compliance-score-label">Compliance Score</div>
+                <div class="compliance-score-number" id="complianceScore">-- <span>/ 6 controls</span></div>
+                <div class="compliance-score-desc" id="complianceDesc">Calculating...</div>
+            </div>
+            <div class="compliance-progress">
+                <div class="compliance-progress-track">
+                    <div class="compliance-progress-fill" id="complianceProgressFill" style="width:0%"></div>
+                </div>
+                <div class="compliance-progress-labels">
+                    <span>0 passing</span>
+                    <span id="complianceProgressLabel">6 controls total</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="compliance-grid" id="complianceGrid"></div>
+
+        <div class="compliance-note">
+            MFA coverage data requires Entra ID P1 or P2 licensing and is not available on the current tenant tier.
+            The MFA control is marked as Data Unavailable and does not affect the compliance score.
+            All other controls are calculated from live snapshot data.
+        </div>
+    </div>
+
 </main>
 <div class="finding-panel-overlay" id="findingPanelOverlay" onclick="closeFindingPanel(event)">
     <div class="finding-panel" id="findingPanel">
@@ -583,7 +702,7 @@
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
                 messages: [{role:'user',content:'List the top identity risks in this tenant. Lead with the most critical. Reference specific users by name and UPN. Be direct and concise. Maximum 120 words.'}],
-                systemPrompt: 'You are an Identity Governance Analyst for Microsoft Entra ID. Analyze strictly from the provided context. Never hallucinate. No markdown headers. Plain text only. Enterprise analyst tone.\n\nCONTEXT:\n' + JSON.stringify(context,null,2),
+                systemPrompt: 'You are an Identity Governance Analyst for Microsoft Entra ID. Analyze strictly from the provided context. Never hallucinate. Use clear formatting with headers and bullet points. Enterprise analyst tone.\n\nCONTEXT:\n' + JSON.stringify(context,null,2),
                 pageContext: 'overview'
             })
         }).then(function(r){
@@ -592,12 +711,12 @@
         }).then(function(data){
             document.getElementById('aiRiskLoading').style.display = 'none';
             document.getElementById('aiRiskContent').style.display = 'block';
-            document.getElementById('aiRiskContent').textContent = data.response;
+            document.getElementById('aiRiskContent').innerHTML = renderMarkdown(data.response);
         }).catch(function(err){
             console.error('AI Risk error:', err);
             document.getElementById('aiRiskLoading').style.display = 'none';
             document.getElementById('aiRiskContent').style.display = 'block';
-            document.getElementById('aiRiskContent').textContent = 'Unable to generate risk analysis.';
+            document.getElementById('aiRiskContent').innerHTML = 'Unable to generate risk analysis.';
         });
     }
 
@@ -621,7 +740,7 @@
         toggleCopilot(true);
         var context = buildContext('overview');
         if (driftData) context.drift = buildContext('drift');
-        var prompt = 'Write a clean executive summary. Format exactly like this:\n\nScore: X/100 \u2014 [Healthy/Moderate/At Risk]\nSnapshot: [date]\n\nKey facts:\n- [fact]\n- [fact]\n- [fact]\n\nAction required:\n- [action]\n- [action]\n\nMaximum 80 words. No markdown. Plain text only.';
+        var prompt = 'Write a compact executive summary in exactly this format, no extra text:\n\nScore: X/100 \u2014 [Healthy/At Risk/Critical] | Snapshot: [date]\n\nFindings: [comma-separated list of 2-3 key facts]\n\nAction: [single most urgent action in one sentence]\n\nMaximum 40 words total. No markdown. No bullet points. Plain text only.';
         addUserMessage('Executive Summary', true);
         await streamAiResponse(prompt, context);
     }
@@ -740,6 +859,7 @@
             .replace(/^\| (.+?) \| (.+?) \|$/gm, '<div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px;"><span style="flex:1;color:var(--text-2)">$1</span><span style="flex:1;">$2</span></div>')
             .replace(/^\|[-| ]+\|$/gm, '')
             .replace(/^- (.+)$/gm, '<div style="display:flex;gap:8px;padding:2px 0;"><span style="color:var(--blue);flex-shrink:0;">&bull;</span><span>$1</span></div>')
+            .replace(/`([^`]+)`/g, '<code style="background:var(--surface-2);padding:1px 4px;border-radius:2px;font-family:Consolas,monospace;font-size:11px;">$1</code>')
             .replace(/\n/g, '<br>')
             .replace(/(<\/div>|<hr[^>]*>)<br>/g, '$1');
     }
@@ -808,6 +928,188 @@
         trendCharts.privileged = mkChart('chartPrivileged','Privileged',TREND_DATA.privileged,'#d83b01');
     }
 
+
+    function renderExecHealth(snap, drift) {
+        var score = snap.summary.governanceScore;
+        var obs   = snap.governanceObservations;
+        var disabledWithLic = snap.users.filter(function(u){return !u.accountEnabled && u.hasLicense;});
+        var critical = obs.filter(function(o){return o.severity==='critical'||o.severity==='high';}).length;
+
+        // Health status
+        var healthStatus = score >= 80 ? 'Healthy' : score >= 60 ? 'At Risk' : 'Critical';
+        var healthEl = document.getElementById('execHealthStatus');
+        healthEl.textContent = healthStatus;
+        healthEl.className = 'exec-health-value ' + (score >= 80 ? 'healthy' : score >= 60 ? 'warning' : 'critical');
+
+        document.getElementById('execScore').textContent = score;
+
+        // Critical findings
+        var critEl = document.getElementById('execCritical');
+        critEl.textContent = critical;
+        critEl.className = 'exec-health-value ' + (critical === 0 ? 'healthy' : critical <= 2 ? 'warning' : 'critical');
+
+        // Weekly change from drift
+        var weeklyEl = document.getElementById('execWeeklyChange');
+        if (drift && drift.summaryDelta) {
+            var delta = drift.summaryDelta.totalUsers;
+            weeklyEl.textContent = (delta > 0 ? '+' : '') + delta + ' users';
+            weeklyEl.className = 'exec-health-value ' + (delta === 0 ? 'blue' : delta > 0 ? 'healthy' : 'warning');
+        } else {
+            weeklyEl.textContent = 'N/A';
+            weeklyEl.className = 'exec-health-value';
+        }
+
+        // License waste at $12.50/user/month
+        var wasteEl = document.getElementById('execLicenseWaste');
+        var waste   = disabledWithLic.length * 12.50;
+        wasteEl.textContent = waste > 0 ? '$' + waste.toFixed(2) + '/mo' : '$0';
+        wasteEl.className = 'exec-health-value ' + (waste > 0 ? 'warning' : 'healthy');
+
+        // Highest risk
+        var riskEl    = document.getElementById('execHighestRisk');
+        var riskSubEl = document.getElementById('execHighestRiskSub');
+        if (disabledWithLic.length > 0) {
+            riskEl.textContent    = disabledWithLic[0].displayName;
+            riskSubEl.textContent = 'Disabled + licensed';
+        } else if (critical > 0) {
+            var highObs = obs.find(function(o){return o.severity==='high'||o.severity==='critical';});
+            riskEl.textContent    = highObs ? highObs.code.replace(/_/g,' ') : 'Review findings';
+            riskSubEl.textContent = 'High severity finding';
+        } else {
+            riskEl.textContent    = 'None';
+            riskEl.className      = 'exec-health-value healthy';
+            riskSubEl.textContent = 'No critical risks';
+        }
+    }
+
+    function renderCompliance(snap) {
+        var users        = snap.users;
+        var obs          = snap.governanceObservations;
+        var disabledWithLic = users.filter(function(u){return !u.accountEnabled && u.hasLicense;});
+        var disabledUsers   = users.filter(function(u){return !u.accountEnabled;});
+        var guestUsers      = users.filter(function(u){return u.userType==='Guest';});
+        var privUsers       = snap.summary.privilegedUsers;
+        var globalAdmins    = snap.directoryRoles.find(function(r){return r.roleName==='Global Administrator';});
+        var gaCount         = globalAdmins && Array.isArray(globalAdmins.members) ? globalAdmins.members.filter(function(m){return m&&m.userPrincipalName;}).length : 0;
+
+        var controls = [
+            {
+                name: 'MFA Coverage',
+                status: 'unknown',
+                statusLabel: 'Data Unavailable',
+                description: 'Verify all users have MFA registered and enforced.',
+                finding: 'MFA registration data requires Entra ID P1/P2 licensing. Not available on current tenant tier.',
+                remediation: 'Upgrade to Entra ID P1 or enforce MFA via Conditional Access Security Defaults.',
+                cis: 'CIS 6.3', nist: 'PR.AC-1', iso: 'A.9.4.2', ms: 'MFA for all users'
+            },
+            {
+                name: 'Disabled Account Cleanup',
+                status: disabledUsers.length === 0 ? 'pass' : 'fail',
+                statusLabel: disabledUsers.length === 0 ? 'Pass' : 'Fail',
+                description: 'Disabled accounts should be removed within 30 days of offboarding.',
+                finding: disabledUsers.length === 0
+                    ? 'No disabled accounts detected in directory.'
+                    : disabledUsers.length + ' disabled account(s) remain in directory: ' + disabledUsers.map(function(u){return u.userPrincipalName;}).join(', '),
+                remediation: 'Review ' + disabledUsers.map(function(u){return u.userPrincipalName;}).join(', ') + ' and delete or archive per retention policy.',
+                cis: 'CIS 5.3', nist: 'PR.AC-4', iso: 'A.9.2.6', ms: 'Remove or block accounts'
+            },
+            {
+                name: 'License Hygiene',
+                status: disabledWithLic.length === 0 ? 'pass' : 'fail',
+                statusLabel: disabledWithLic.length === 0 ? 'Pass' : 'Fail',
+                description: 'Disabled accounts must not retain active licenses.',
+                finding: disabledWithLic.length === 0
+                    ? 'No disabled users hold active licenses.'
+                    : disabledWithLic.map(function(u){return u.userPrincipalName;}).join(', ') + ' is disabled but retains an active license. Estimated waste: $' + (disabledWithLic.length * 12.50).toFixed(2) + '/month.',
+                remediation: 'Revoke license from ' + (disabledWithLic[0] ? disabledWithLic[0].userPrincipalName : 'affected accounts') + ' immediately via Microsoft 365 admin center.',
+                cis: 'CIS 5.3', nist: 'PR.AC-4', iso: 'A.9.2.2', ms: 'License management'
+            },
+            {
+                name: 'Guest Account Governance',
+                status: guestUsers.length === 0 ? 'pass' : guestUsers.length <= 5 ? 'warn' : 'fail',
+                statusLabel: guestUsers.length === 0 ? 'Pass' : guestUsers.length <= 5 ? 'Review' : 'Fail',
+                description: 'Guest accounts should be reviewed quarterly and removed when no longer needed.',
+                finding: guestUsers.length === 0
+                    ? 'No guest accounts detected. Positive control.'
+                    : guestUsers.length + ' guest account(s) present. Verify access necessity and review cadence.',
+                remediation: guestUsers.length === 0
+                    ? 'Continue monitoring. Enforce Entra External Identities policies when guests are added.'
+                    : 'Run access review on all guest accounts via Entra ID Access Reviews.',
+                cis: 'CIS 6.1', nist: 'PR.AC-3', iso: 'A.9.2.1', ms: 'Guest access review'
+            },
+            {
+                name: 'Privileged Account Review',
+                status: privUsers <= 2 ? 'pass' : privUsers <= 4 ? 'warn' : 'fail',
+                statusLabel: privUsers <= 2 ? 'Pass' : privUsers <= 4 ? 'Review' : 'Fail',
+                description: 'Privileged role assignments should be minimal, justified, and reviewed regularly.',
+                finding: privUsers + ' privileged user(s) detected across all directory roles. ' + (privUsers <= 2 ? 'Count is within recommended range.' : 'Count exceeds recommended threshold of 2.'),
+                remediation: privUsers <= 2
+                    ? 'Validate role assignments are still required. Consider PIM for just-in-time elevation.'
+                    : 'Remove unnecessary privileged assignments. Implement PIM for eligible roles.',
+                cis: 'CIS 5.4', nist: 'PR.AC-6', iso: 'A.9.2.3', ms: 'Privileged identity management'
+            },
+            {
+                name: 'Global Admin Count',
+                status: gaCount <= 2 ? 'pass' : gaCount <= 4 ? 'warn' : 'fail',
+                statusLabel: gaCount <= 2 ? 'Pass' : gaCount <= 4 ? 'Review' : 'Fail',
+                description: 'Global Administrator count should not exceed 2-4 accounts. Each GA is a full tenant compromise risk.',
+                finding: gaCount + ' Global Administrator(s) assigned. ' + (gaCount <= 2 ? 'Within recommended range.' : 'Review justification for each assignment.'),
+                remediation: gaCount <= 2
+                    ? 'Ensure all Global Admins use phishing-resistant MFA and have no standing access (use PIM).'
+                    : 'Reduce Global Admin count. Replace with scoped admin roles where possible.',
+                cis: 'CIS 5.4', nist: 'PR.AC-6', iso: 'A.9.4.1', ms: 'Reduce global admins'
+            }
+        ];
+
+        var passing = controls.filter(function(c){return c.status==='pass';}).length;
+        var scoreable = controls.filter(function(c){return c.status!=='unknown';}).length;
+        var pct = scoreable > 0 ? Math.round((passing / scoreable) * 100) : 0;
+
+        document.getElementById('complianceScore').innerHTML = passing + ' <span>/ ' + scoreable + ' controls</span>';
+        document.getElementById('complianceDesc').textContent = pct >= 80
+            ? 'Strong compliance posture. ' + (scoreable - passing) + ' control(s) need attention.'
+            : pct >= 60 ? 'Moderate compliance. Review failing controls.'
+            : 'Low compliance score. Immediate remediation required.';
+
+        var fillEl = document.getElementById('complianceProgressFill');
+        fillEl.style.width = pct + '%';
+        fillEl.className = 'compliance-progress-fill' + (pct >= 80 ? '' : pct >= 60 ? ' warning' : ' critical');
+        document.getElementById('complianceProgressLabel').textContent = passing + ' of ' + scoreable + ' passing';
+
+        var iconMap = {pass: '&#10003;', fail: '&#10007;', warn: '!', unknown: '?'};
+
+        document.getElementById('complianceGrid').innerHTML = controls.map(function(c) {
+            return '<div class="compliance-card">' +
+                '<div class="compliance-card-header">' +
+                    '<div class="compliance-card-left">' +
+                        '<div class="compliance-status-icon ' + c.status + '">' + iconMap[c.status] + '</div>' +
+                        '<div class="compliance-control-name">' + c.name + '</div>' +
+                    '</div>' +
+                    '<span class="compliance-status-badge ' + c.status + '">' + c.statusLabel + '</span>' +
+                '</div>' +
+                '<div class="compliance-card-body">' +
+                    '<div>' +
+                        '<div class="compliance-body-section-label">Finding</div>' +
+                        '<div class="compliance-body-text">' + c.finding + '</div>' +
+                    '</div>' +
+                    '<div>' +
+                        '<div class="compliance-body-section-label">Remediation</div>' +
+                        '<div class="compliance-body-text">' + c.remediation + '</div>' +
+                        '<div style="margin-top:10px;">' +
+                            '<div class="compliance-body-section-label" style="margin-bottom:6px;">Framework Mapping</div>' +
+                            '<div class="compliance-mappings">' +
+                                '<span class="compliance-tag cis">' + c.cis + '</span>' +
+                                '<span class="compliance-tag nist">NIST ' + c.nist + '</span>' +
+                                '<span class="compliance-tag iso">ISO ' + c.iso + '</span>' +
+                                '<span class="compliance-tag ms">MS: ' + c.ms + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
     function loadData() {
         Promise.all([
             fetch('http://localhost:3000/snapshots/sample/identity-snapshot-2026-06-23.json').then(function(r){return r.json();}),
@@ -822,6 +1124,8 @@
             renderUsers();
             renderDisabled();
             renderScoreBreakdown(snapshotData);
+            renderExecHealth(snapshotData, driftData);
+            renderCompliance(snapshotData);
             generateAiRiskAnalysis(snapshotData);
         }).catch(function(err) {
             console.error('Load failed:', err);
@@ -992,7 +1296,7 @@
         document.getElementById('page-'+page).classList.add('active');
         if (btn) btn.classList.add('active');
         currentPage = page;
-        var names = {overview:'Overview',drift:'Drift Report',privileged:'Privileged Access',users:'All Users',disabled:'Disabled Users',trends:'Trends'};
+        var names = {overview:'Overview',drift:'Drift Report',privileged:'Privileged Access',users:'All Users',disabled:'Disabled Users',trends:'Trends',compliance:'Compliance'};
         document.getElementById('copilotContextLabel').textContent = 'Viewing: '+(names[page]||page);
         updateSuggestedPrompts();
         if (page==='trends') renderTrendCharts();
