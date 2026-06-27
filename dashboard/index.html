@@ -94,7 +94,7 @@
         .ai-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: linear-gradient(135deg, #0078d4, #50e6ff); color: white; padding: 2px 6px; border-radius: 3px; }
         .ai-risk-body { padding: 16px; min-height: 60px; }
         .ai-risk-loading { display: flex; align-items: center; gap: 10px; color: var(--text-3); font-size: 13px; }
-        .ai-risk-content { font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+        .ai-risk-content { font-size: 13px; color: var(--text); line-height: 1.6; }
         .exec-summary-btn { font-size: 12px; font-weight: 500; color: var(--blue); background: var(--blue-bg); border: 1px solid #b3d6f4; border-radius: 2px; padding: 5px 12px; cursor: pointer; font-family: inherit; transition: background 0.1s; }
         .exec-summary-btn:hover { background: #c7e0f4; }
         .finding-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 1100; display: none; align-items: center; justify-content: center; }
@@ -243,7 +243,7 @@
         .msg.assistant { align-items: flex-start; }
         .msg-bubble { max-width: 88%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
         .msg.user .msg-bubble { background: var(--blue); color: white; border-bottom-right-radius: 4px; }
-        .msg.assistant .msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; white-space: pre-wrap; }
+        .msg.assistant .msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; line-height: 1.6; }
         .msg-time { font-size: 10px; color: var(--text-3); padding: 0 4px; }
         .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-bottom-left-radius: 4px; width: fit-content; }
         .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); animation: typing 1.2s infinite; }
@@ -642,7 +642,7 @@
         var time = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
         var el = document.createElement('div');
         el.className = 'msg user';
-        el.innerHTML = '<div class="msg-bubble">'+escapeHtml(text)+'</div><div class="msg-time">'+time+'</div>';
+        el.innerHTML = '<div class="msg-bubble">'+renderMarkdown(text)+'</div><div class="msg-time">'+time+'</div>';
         msgs.appendChild(el);
         msgs.scrollTop = msgs.scrollHeight;
     }
@@ -662,7 +662,7 @@
         var time = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
         var el = document.createElement('div');
         el.className = 'msg assistant';
-        el.innerHTML = '<div class="msg-bubble">'+escapeHtml(text)+'</div><div class="msg-time">'+time+'</div>';
+        el.innerHTML = '<div class="msg-bubble">'+renderMarkdown(text)+'</div><div class="msg-time">'+time+'</div>';
         msgs.appendChild(el); msgs.scrollTop = msgs.scrollHeight;
     }
 
@@ -729,7 +729,20 @@
     }
 
     function useSuggestedPrompt(text) { document.getElementById('copilotInput').value = text; sendCopilotMessage(); }
-    function escapeHtml(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+    function escapeHtml(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function renderMarkdown(t) {
+        return escapeHtml(t)
+            .replace(/^### (.+)$/gm, '<div style="font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.05em;margin:12px 0 6px;">$1</div>')
+            .replace(/^## (.+)$/gm,  '<div style="font-size:13px;font-weight:700;color:var(--text);margin:12px 0 6px;">$1</div>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/^---$/gm, '<hr style="border:none;border-top:1px solid var(--border);margin:10px 0;">')
+            .replace(/^\| (.+?) \| (.+?) \|$/gm, '<div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px;"><span style="flex:1;color:var(--text-2)">$1</span><span style="flex:1;">$2</span></div>')
+            .replace(/^\|[-| ]+\|$/gm, '')
+            .replace(/^- (.+)$/gm, '<div style="display:flex;gap:8px;padding:2px 0;"><span style="color:var(--blue);flex-shrink:0;">&bull;</span><span>$1</span></div>')
+            .replace(/\n/g, '<br>')
+            .replace(/(<\/div>|<hr[^>]*>)<br>/g, '$1');
+    }
 
     function openObsFinding(idx) {
         if (snapshotData && snapshotData.governanceObservations && snapshotData.governanceObservations[idx]) {
