@@ -566,15 +566,8 @@
 
     function generateAiRiskAnalysis(snap) {
         if (!snap || !COPILOT_ENDPOINT || COPILOT_ENDPOINT === 'YOUR_AZURE_FUNCTION_URL_HERE') return;
-        var loadingEl = document.getElementById('aiRiskLoading');
-        var contentEl = document.getElementById('aiRiskContent');
-		if (!loadingEl || !contentEl) {
-            setTimeout(function() { generateAiRiskAnalysis(snap); }, 200);
-            return;
-        }
-        loadingEl.style.display = 'flex';
-        contentEl.style.display = 'none';
-		
+        document.getElementById('aiRiskLoading').style.display = 'flex';
+        document.getElementById('aiRiskContent').style.display = 'none';
         var context = {
             snapshotDate: snap.snapshotMetadata.snapshotDate,
             tenantDomain: snap.snapshotMetadata.tenantDomain,
@@ -597,14 +590,14 @@
             if (!r.ok) throw new Error('HTTP '+r.status);
             return r.json();
         }).then(function(data){
-            loadingEl.style.display = 'none';
-            contentEl.style.display = 'block';
-            contentEl.textContent = data.response;
+            document.getElementById('aiRiskLoading').style.display = 'none';
+            document.getElementById('aiRiskContent').style.display = 'block';
+            document.getElementById('aiRiskContent').textContent = data.response;
         }).catch(function(err){
             console.error('AI Risk error:', err);
-            loadingEl.style.display = 'none';
-            contentEl.style.display = 'block';
-            contentEl.textContent = 'Unable to generate risk analysis.';
+            document.getElementById('aiRiskLoading').style.display = 'none';
+            document.getElementById('aiRiskContent').style.display = 'block';
+            document.getElementById('aiRiskContent').textContent = 'Unable to generate risk analysis.';
         });
     }
 
@@ -778,7 +771,7 @@
             html += '<div class="score-breakdown-row">'+
                 '<div class="score-breakdown-label">'+r.label+'</div>'+
                 '<div class="score-bar-wrap"><div class="score-bar-fill '+(isD?'red':'green')+'" style="width:'+bw+'%"></div></div>'+
-                '<div class="score-breakdown-value '+(isD?'deduction':'ok')+'">'+(isD?'-'+Math.abs(r.points):'+'+Math.abs(r.points))+'</div>'+
+                '<div class="score-breakdown-value '+(isD?'deduction':'ok')+'">'+(isD?'-':'+'+Math.abs(r.points))+Math.abs(r.points)+'</div>'+
             '</div>';
         });
         var totalD = rules.filter(function(r){return r.type==='deduction'&&r.condition;}).reduce(function(s,r){return s+Math.abs(r.points);},0);
