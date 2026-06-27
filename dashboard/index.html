@@ -4,569 +4,271 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Identity Governance Portal | SlyTech</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         :root {
-            --bg:         #faf9f8;
-            --surface:    #ffffff;
-            --surface-2:  #f3f2f1;
-            --border:     #edebe9;
-            --border-2:   #e1dfdd;
-            --blue:       #0078d4;
-            --blue-dark:  #106ebe;
-            --blue-bg:    #deecf9;
-            --green:      #107c10;
-            --green-bg:   #dff6dd;
-            --orange:     #ca5010;
-            --orange-bg:  #fed9cc;
-            --red:        #d83b01;
-            --red-bg:     #fde7e9;
-            --text:       #323130;
-            --text-2:     #605e5c;
-            --text-3:     #8a8886;
+            --bg: #faf9f8; --surface: #ffffff; --surface-2: #f3f2f1;
+            --border: #edebe9; --border-2: #e1dfdd;
+            --blue: #0078d4; --blue-dark: #106ebe; --blue-bg: #deecf9;
+            --green: #107c10; --green-bg: #dff6dd;
+            --orange: #ca5010; --orange-bg: #fed9cc;
+            --red: #d83b01; --red-bg: #fde7e9;
+            --text: #323130; --text-2: #605e5c; --text-3: #8a8886;
         }
-
-        body {
-            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            font-size: 14px;
-            -webkit-font-smoothing: antialiased;
-        }
-
+        body { font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; -webkit-font-smoothing: antialiased; }
         .top-strip { height: 4px; background: var(--blue); }
-
-        header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 48px;
-        }
-
+        header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 48px; }
         .header-left { display: flex; align-items: center; gap: 12px; }
-
-        .logo-squares {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
-            width: 18px;
-            height: 18px;
-        }
-
+        .logo-squares { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 18px; height: 18px; }
         .logo-squares span { background: var(--blue); }
         .logo-squares span:nth-child(2) { background: #50e6ff; }
         .logo-squares span:nth-child(3) { background: #ffb900; }
         .logo-squares span:nth-child(4) { background: #d13438; }
-
         .header-title { font-size: 14px; font-weight: 600; color: var(--text); }
         .header-divider { width: 1px; height: 20px; background: var(--border-2); margin: 0 4px; }
         .header-sub { font-size: 13px; color: var(--text-2); }
-
         .header-right { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--text-2); }
         .header-right .label { color: var(--text-3); }
         .header-right .value { color: var(--text); font-weight: 600; margin-left: 6px; }
-
-        nav {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0 24px;
-            display: flex;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
-            padding: 10px 16px;
-            font-family: inherit;
-            font-size: 13px;
-            color: var(--text-2);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: color 0.1s, border-color 0.1s;
-        }
-
+        nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; }
+        .nav-btn { background: transparent; border: none; padding: 10px 16px; font-family: inherit; font-size: 13px; color: var(--text-2); cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.1s, border-color 0.1s; }
         .nav-btn:hover { color: var(--text); }
         .nav-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
-
-        main { max-width: 1280px; margin: 0 auto; padding: 24px; }
-
+        main { max-width: 1280px; margin: 0 auto; padding: 24px; transition: padding-right 0.3s ease; }
+        main.copilot-open { padding-right: 420px; }
         .page { display: none; }
         .page.active { display: block; }
-
         .page-header { margin-bottom: 20px; }
         .breadcrumb { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
         .breadcrumb span { color: var(--text-2); }
         .page-title { font-size: 20px; font-weight: 600; color: var(--text); }
-
-        /* Score + stats */
-        .top-row {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .score-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
+        .top-row { display: grid; grid-template-columns: 280px 1fr; gap: 16px; margin-bottom: 12px; }
+        .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
         .score-ring-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
         .score-ring-wrap svg { transform: rotate(-90deg); }
-
-        .score-number {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
+        .score-number { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; }
         .score-meta-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
         .score-meta-title { font-size: 14px; font-weight: 600; color: var(--text); margin: 4px 0; }
         .score-meta-desc { font-size: 12px; color: var(--text-2); line-height: 1.4; }
-
-        /* Stat grids */
-        .stat-grid-primary {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 12px;
-        }
-
-        .stat-grid-secondary {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            padding: 16px 20px;
-            cursor: default;
-        }
-
+        .stat-grid-primary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 12px; }
+        .stat-grid-secondary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; padding: 16px 20px; }
         .stat-card.clickable { cursor: pointer; transition: border-color 0.15s; }
         .stat-card.clickable:hover { border-color: var(--blue); }
-
         .stat-label { font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
         .stat-value { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.1; }
         .stat-foot { font-size: 11px; color: var(--text-3); margin-top: 4px; }
         .stat-link { font-size: 11px; color: var(--blue); margin-top: 6px; cursor: pointer; display: inline-block; }
         .stat-link:hover { text-decoration: underline; }
-
-        /* Findings summary bar */
-        .findings-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .finding-cell {
-            padding: 14px 20px;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-        }
-
+        .findings-bar { display: grid; grid-template-columns: repeat(4, 1fr); margin-bottom: 24px; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+        .finding-cell { padding: 14px 20px; background: var(--surface); border-right: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
         .finding-cell:last-child { border-right: none; }
-
-        .finding-count {
-            font-size: 26px;
-            font-weight: 600;
-            line-height: 1.1;
-        }
-
+        .finding-cell:hover { background: var(--surface-2); }
+        .finding-count { font-size: 26px; font-weight: 600; line-height: 1.1; }
         .finding-count.critical { color: var(--red); }
-        .finding-count.high     { color: var(--orange); }
-        .finding-count.medium   { color: #ca8a04; }
-        .finding-count.total    { color: var(--green); }
-
-        .finding-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-3);
-            margin-top: 4px;
-        }
-
-        /* Section */
+        .finding-count.high { color: var(--orange); }
+        .finding-count.medium { color: #ca8a04; }
+        .finding-count.total { color: var(--green); }
+        .finding-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-top: 4px; }
+        .score-breakdown { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+        .score-breakdown-header { padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+        .score-breakdown-title { font-size: 13px; font-weight: 600; color: var(--text); }
+        .score-breakdown-body { padding: 16px; }
+        .score-breakdown-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+        .score-breakdown-row:last-child { border-bottom: none; }
+        .score-breakdown-label { font-size: 12px; color: var(--text-2); min-width: 200px; }
+        .score-breakdown-value { font-size: 12px; font-weight: 600; min-width: 40px; text-align: right; }
+        .score-breakdown-value.deduction { color: var(--red); }
+        .score-breakdown-value.ok { color: var(--green); }
+        .score-bar-wrap { flex: 1; margin: 0 16px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+        .score-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+        .score-bar-fill.red { background: var(--red); }
+        .score-bar-fill.green { background: var(--green); }
+        .score-total-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 4px; border-top: 2px solid var(--border); margin-top: 8px; }
+        .score-total-label { font-size: 13px; font-weight: 600; color: var(--text); }
+        .score-total-value { font-size: 20px; font-weight: 700; color: var(--blue); }
+        .ai-risk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+        .ai-risk-header { padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: center; justify-content: space-between; }
+        .ai-risk-title { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .ai-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: linear-gradient(135deg, #0078d4, #50e6ff); color: white; padding: 2px 6px; border-radius: 3px; }
+        .ai-risk-body { padding: 16px; min-height: 60px; }
+        .ai-risk-loading { display: flex; align-items: center; gap: 10px; color: var(--text-3); font-size: 13px; }
+        .ai-risk-content { font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+        .exec-summary-btn { font-size: 12px; font-weight: 500; color: var(--blue); background: var(--blue-bg); border: 1px solid #b3d6f4; border-radius: 2px; padding: 5px 12px; cursor: pointer; font-family: inherit; transition: background 0.1s; }
+        .exec-summary-btn:hover { background: #c7e0f4; }
+        .finding-panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 1100; display: none; align-items: center; justify-content: center; }
+        .finding-panel-overlay.open { display: flex; }
+        .finding-panel { background: var(--surface); border-radius: 4px; width: 560px; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .finding-panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--surface); }
+        .finding-panel-title { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; margin-right: 12px; }
+        .finding-panel-close { width: 28px; height: 28px; border: none; background: transparent; cursor: pointer; border-radius: 4px; color: var(--text-3); font-size: 18px; line-height: 1; }
+        .finding-panel-close:hover { background: var(--surface-2); }
+        .finding-panel-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+        .finding-panel-section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 6px; }
+        .finding-panel-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+        .finding-panel-users { display: flex; flex-direction: column; gap: 4px; }
+        .finding-panel-user { font-size: 12px; color: var(--text-2); padding: 5px 10px; background: var(--bg); border-radius: 2px; font-family: "Consolas", monospace; }
+        .finding-impact-badge { display: inline-block; padding: 3px 10px; border-radius: 2px; font-size: 11px; font-weight: 600; }
+        .finding-impact-badge.high { background: var(--orange-bg); color: var(--orange); }
+        .finding-impact-badge.critical { background: var(--red-bg); color: var(--red); }
+        .finding-impact-badge.medium { background: #fef9c3; color: #854d0e; }
+        .finding-impact-badge.low { background: var(--green-bg); color: var(--green); }
         .section { margin-bottom: 24px; }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .section-title { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
         .section-count { font-size: 12px; color: var(--text-3); font-weight: 400; }
-
-        /* Filter pills */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .filter-pill {
-            padding: 4px 12px;
-            border-radius: 12px;
-            border: 1px solid var(--border-2);
-            background: var(--surface);
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-2);
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.1s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        .filter-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        .filter-pill { padding: 4px 12px; border-radius: 12px; border: 1px solid var(--border-2); background: var(--surface); font-size: 12px; font-weight: 500; color: var(--text-2); cursor: pointer; font-family: inherit; transition: all 0.1s; display: flex; align-items: center; gap: 6px; }
         .filter-pill:hover { border-color: var(--blue); color: var(--blue); }
         .filter-pill.active { background: var(--blue); border-color: var(--blue); color: white; }
-
-        .filter-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        /* Observations */
+        .filter-dot { width: 8px; height: 8px; border-radius: 50%; }
         .obs-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
-
-        .obs-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            background: var(--surface);
-            padding: 12px 16px;
-        }
-
+        .obs-item { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); padding: 12px 16px; cursor: pointer; transition: background 0.1s; }
+        .obs-item:hover { background: var(--blue-bg); }
         .obs-item.hidden { display: none; }
-
         .obs-icon { flex-shrink: 0; width: 16px; height: 16px; margin-top: 2px; }
-        .obs-icon.high   { color: var(--red); }
+        .obs-icon.high, .obs-icon.critical { color: var(--red); }
         .obs-icon.medium { color: var(--orange); }
-        .obs-icon.info   { color: var(--blue); }
-
+        .obs-icon.info { color: var(--blue); }
         .obs-severity { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-        .obs-severity.high   { color: var(--red); }
+        .obs-severity.high, .obs-severity.critical { color: var(--red); }
         .obs-severity.medium { color: var(--orange); }
-        .obs-severity.info   { color: var(--blue); }
+        .obs-severity.info { color: var(--blue); }
         .obs-message { font-size: 13px; color: var(--text); margin-top: 2px; line-height: 1.4; }
-
-        /* Table */
+        .obs-click-hint { font-size: 11px; color: var(--text-3); margin-top: 3px; }
         .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
-
-        .table-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 16px;
-            border-bottom: 1px solid var(--border);
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
+        .table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
         .toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .toolbar-right { display: flex; align-items: center; gap: 8px; }
-
         .table-count { font-size: 12px; color: var(--text-2); white-space: nowrap; }
-
-        .search-input {
-            background: var(--surface);
-            border: 1px solid var(--border-2);
-            border-radius: 2px;
-            padding: 6px 10px 6px 30px;
-            font-size: 13px;
-            font-family: inherit;
-            color: var(--text);
-            width: 240px;
-            outline: none;
-            transition: border-color 0.1s;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238a8886' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: 8px center;
-        }
-
+        .search-input { background: var(--surface); border: 1px solid var(--border-2); border-radius: 2px; padding: 6px 10px 6px 30px; font-size: 13px; font-family: inherit; color: var(--text); width: 240px; outline: none; transition: border-color 0.1s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238a8886' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 8px center; }
         .search-input:focus { border-color: var(--blue); }
         .search-input::placeholder { color: var(--text-3); }
-
         .view-toggle { display: flex; border: 1px solid var(--border-2); border-radius: 2px; overflow: hidden; }
-
-        .view-toggle-btn {
-            padding: 5px 12px;
-            font-size: 12px;
-            font-family: inherit;
-            border: none;
-            background: var(--surface);
-            color: var(--text-2);
-            cursor: pointer;
-            border-right: 1px solid var(--border-2);
-            transition: all 0.1s;
-        }
-
+        .view-toggle-btn { padding: 5px 12px; font-size: 12px; font-family: inherit; border: none; background: var(--surface); color: var(--text-2); cursor: pointer; border-right: 1px solid var(--border-2); transition: all 0.1s; }
         .view-toggle-btn:last-child { border-right: none; }
         .view-toggle-btn.active { background: var(--blue); color: white; }
         .view-toggle-btn:hover:not(.active) { background: var(--surface-2); }
-
         table { width: 100%; border-collapse: collapse; }
         thead tr { border-bottom: 1px solid var(--border); background: var(--surface-2); }
-
-        th {
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-2);
-            text-align: left;
-            white-space: nowrap;
-        }
-
+        th { padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--text-2); text-align: left; white-space: nowrap; }
         tbody tr { border-bottom: 1px solid var(--border); transition: background 0.05s; }
         tbody tr:last-child { border-bottom: none; }
         tbody tr:hover { background: var(--surface-2); }
-
         td { padding: 10px 16px; font-size: 13px; color: var(--text); }
         td.secondary { color: var(--text-2); }
         td.mono { font-family: "Cascadia Code", "Consolas", monospace; font-size: 12px; }
-
-        /* Badges */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 400;
-        }
-
+        .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
         .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .badge.enabled .badge-dot  { background: var(--green); }
+        .badge.enabled .badge-dot { background: var(--green); }
         .badge.disabled .badge-dot { background: var(--orange); }
-
-        .tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 2px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 11px; font-weight: 500; }
         .tag.internal { background: var(--blue-bg); color: var(--blue); }
-        .tag.guest    { background: var(--orange-bg); color: var(--orange); }
-        .tag.yes      { background: var(--red-bg); color: var(--red); }
-        .tag.no       { background: var(--green-bg); color: var(--green); }
-
-        .severity-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 2px;
-        }
-
+        .tag.guest { background: var(--orange-bg); color: var(--orange); }
+        .tag.yes { background: var(--red-bg); color: var(--red); }
+        .tag.no { background: var(--green-bg); color: var(--green); }
+        .severity-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 2px; }
         .severity-badge.critical { background: var(--red-bg); color: var(--red); }
-        .severity-badge.high     { background: var(--orange-bg); color: var(--orange); }
-        .severity-badge.medium   { background: #fef9c3; color: #854d0e; }
-        .severity-badge.info     { background: var(--blue-bg); color: var(--blue); }
-
-        /* Groups chips */
-        .group-chips { display: flex; flex-wrap: wrap; gap: 4px; }
-
-        .group-chip {
-            background: var(--surface-2);
-            border: 1px solid var(--border-2);
-            border-radius: 2px;
-            padding: 1px 6px;
-            font-size: 11px;
-            color: var(--text-2);
-        }
-
-        /* Drift */
-        .drift-period {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            padding: 10px 16px;
-            font-size: 13px;
-            color: var(--text-2);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
+        .severity-badge.high { background: var(--orange-bg); color: var(--orange); }
+        .severity-badge.medium { background: #fef9c3; color: #854d0e; }
+        .severity-badge.info { background: var(--blue-bg); color: var(--blue); }
+        .charts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; padding: 16px; }
+        .chart-title { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+        .chart-wrap { position: relative; height: 140px; }
+        .drift-period { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; padding: 10px 16px; font-size: 13px; color: var(--text-2); display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; }
         .drift-period .date { color: var(--text); font-weight: 600; }
-        .drift-period .arrow { color: var(--text-3); }
-
-        .delta-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .delta-value {
-            font-size: 28px;
-            font-weight: 600;
-            line-height: 1.1;
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-
+        .delta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .delta-value { font-size: 28px; font-weight: 600; line-height: 1.1; display: flex; align-items: baseline; gap: 6px; }
         .delta-arrow { font-size: 14px; font-weight: 600; }
-        .delta-value.up-bad   { color: var(--red); }
-        .delta-value.up-good  { color: var(--green); }
+        .delta-value.up-bad { color: var(--red); }
+        .delta-value.up-good { color: var(--green); }
         .delta-value.down-bad { color: var(--red); }
-        .delta-value.neutral  { color: var(--text-2); }
-
+        .delta-value.neutral { color: var(--text-2); }
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
         .drift-list-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; }
-
-        .drift-list-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .drift-list-item {
-            padding: 10px 16px;
-            font-size: 13px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-
+        .drift-list-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text); }
+        .drift-list-item { padding: 10px 16px; font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
         .drift-list-item:last-child { border-bottom: none; }
-
-        .drift-indicator {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .drift-indicator.add     { background: var(--green-bg); color: var(--green); }
+        .drift-indicator { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .drift-indicator.add { background: var(--green-bg); color: var(--green); }
         .drift-indicator.warning { background: var(--orange-bg); color: var(--orange); }
-
         .empty-state { padding: 20px 16px; font-size: 13px; color: var(--text-3); text-align: center; }
-
-        /* Privileged */
         .role-grid { display: flex; flex-direction: column; gap: 12px; }
-
         .role-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; }
-
-        .role-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface-2);
-        }
-
-        .role-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .role-name::before {
-            content: "";
-            width: 4px;
-            height: 16px;
-            background: var(--blue);
-            border-radius: 1px;
-        }
-
+        .role-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); }
+        .role-name { font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .role-name::before { content: ""; width: 4px; height: 16px; background: var(--blue); border-radius: 1px; }
         .role-count { font-size: 12px; color: var(--text-2); }
-
-        .member-row {
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
+        .member-row { padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
         .member-row:last-child { border-bottom: none; }
-
-        .member-initials {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--blue-bg);
-            color: var(--blue);
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
+        .member-initials { width: 28px; height: 28px; border-radius: 50%; background: var(--blue-bg); color: var(--blue); font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .member-name { font-size: 13px; font-weight: 600; color: var(--text); }
-        .member-upn  { font-size: 12px; color: var(--text-2); margin-top: 1px; }
-        .no-members  { padding: 14px 16px; font-size: 13px; color: var(--text-3); }
+        .member-upn { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+        .no-members { padding: 14px 16px; font-size: 13px; color: var(--text-3); }
+        .copilot-fab { position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #0078d4, #50e6ff); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,120,212,0.4); transition: transform 0.2s, box-shadow 0.2s; z-index: 1000; }
+        .copilot-fab:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,120,212,0.5); }
+        .copilot-fab svg { width: 24px; height: 24px; color: white; }
+        .copilot-panel { position: fixed; top: 0; right: -400px; width: 390px; height: 100vh; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-left: 1px solid var(--border); box-shadow: -4px 0 24px rgba(0,0,0,0.08); display: flex; flex-direction: column; z-index: 999; transition: right 0.3s cubic-bezier(0.4,0,0.2,1); }
+        .copilot-panel.open { right: 0; }
+        .copilot-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); flex-shrink: 0; }
+        .copilot-header-left { display: flex; align-items: center; gap: 10px; }
+        .copilot-logo { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #0078d4, #50e6ff); display: flex; align-items: center; justify-content: center; }
+        .copilot-logo svg { width: 16px; height: 16px; color: white; }
+        .copilot-title { font-size: 13px; font-weight: 600; color: var(--text); }
+        .copilot-subtitle { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+        .copilot-header-actions { display: flex; align-items: center; gap: 4px; }
+        .copilot-icon-btn { width: 28px; height: 28px; border-radius: 4px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-3); transition: background 0.1s, color 0.1s; }
+        .copilot-icon-btn:hover { background: var(--surface-2); color: var(--text); }
+        .copilot-icon-btn svg { width: 14px; height: 14px; }
+        .copilot-context-bar { padding: 8px 16px; background: var(--blue-bg); border-bottom: 1px solid #b3d6f4; font-size: 11px; color: var(--blue); display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .copilot-context-bar svg { width: 12px; height: 12px; }
+        .copilot-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .copilot-messages::-webkit-scrollbar { width: 4px; }
+        .copilot-messages::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+        .copilot-welcome { text-align: center; padding: 20px 0; }
+        .copilot-welcome-icon { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #0078d4, #50e6ff); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+        .copilot-welcome-icon svg { width: 28px; height: 28px; color: white; }
+        .copilot-welcome h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+        .copilot-welcome p { font-size: 12px; color: var(--text-3); line-height: 1.5; }
+        .suggested-prompts { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .suggested-prompt { padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; color: var(--text-2); cursor: pointer; text-align: left; font-family: inherit; transition: border-color 0.1s, color 0.1s, background 0.1s; }
+        .suggested-prompt:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-bg); }
+        .analyze-btn { padding: 10px 12px; background: linear-gradient(135deg, #0078d4, #106ebe); border: none; border-radius: 6px; font-size: 12px; font-weight: 600; color: white; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 8px; transition: opacity 0.1s; margin-top: 8px; width: 100%; justify-content: center; }
+        .analyze-btn:hover { opacity: 0.9; }
+        .analyze-btn svg { width: 14px; height: 14px; }
+        .msg { display: flex; flex-direction: column; gap: 4px; }
+        .msg.user { align-items: flex-end; }
+        .msg.assistant { align-items: flex-start; }
+        .msg-bubble { max-width: 88%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+        .msg.user .msg-bubble { background: var(--blue); color: white; border-bottom-right-radius: 4px; }
+        .msg.assistant .msg-bubble { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; white-space: pre-wrap; }
+        .msg-time { font-size: 10px; color: var(--text-3); padding: 0 4px; }
+        .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; border-bottom-left-radius: 4px; width: fit-content; }
+        .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); animation: typing 1.2s infinite; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+        .copilot-footer { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+        .copilot-input-wrap { display: flex; gap: 8px; align-items: flex-end; }
+        .copilot-input { flex: 1; border: 1px solid var(--border-2); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: inherit; color: var(--text); resize: none; outline: none; min-height: 38px; max-height: 120px; line-height: 1.4; transition: border-color 0.1s; background: var(--bg); }
+        .copilot-input:focus { border-color: var(--blue); }
+        .copilot-input::placeholder { color: var(--text-3); }
+        .copilot-send { width: 36px; height: 36px; border-radius: 8px; background: var(--blue); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.1s; }
+        .copilot-send:hover { background: var(--blue-dark); }
+        .copilot-send:disabled { background: var(--border-2); cursor: not-allowed; }
+        .copilot-send svg { width: 16px; height: 16px; color: white; }
+        .copilot-hint { font-size: 10px; color: var(--text-3); margin-top: 6px; text-align: center; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; }
     </style>
 </head>
 <body>
-
 <div class="top-strip"></div>
-
 <header>
     <div class="header-left">
-        <div class="logo-squares">
-            <span></span><span></span><span></span><span></span>
-        </div>
+        <div class="logo-squares"><span></span><span></span><span></span><span></span></div>
         <span class="header-title">Identity Governance Portal</span>
         <div class="header-divider"></div>
         <span class="header-sub">slytech.us</span>
@@ -576,53 +278,32 @@
         <span><span class="label">Mode:</span><span class="value">Read-only</span></span>
     </div>
 </header>
-
 <nav>
     <button class="nav-btn active" onclick="showPage('overview', this)">Overview</button>
     <button class="nav-btn" onclick="showPage('drift', this)">Drift Report</button>
     <button class="nav-btn" onclick="showPage('privileged', this)">Privileged Access</button>
     <button class="nav-btn" onclick="showPage('users', this)">All Users</button>
     <button class="nav-btn" onclick="showPage('disabled', this)">Disabled Users</button>
+    <button class="nav-btn" onclick="showPage('trends', this)">Trends</button>
 </nav>
-
-<main>
-
-    <!-- Overview -->
+<main id="mainContent">
     <div id="page-overview" class="page active">
         <div class="page-header">
             <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Overview</span></div>
             <div class="page-title">Identity overview</div>
         </div>
-
-        <!-- Findings bar -->
         <div class="findings-bar">
-            <div class="finding-cell">
-                <div class="finding-count critical" id="findingsCritical">0</div>
-                <div class="finding-label">Critical</div>
-            </div>
-            <div class="finding-cell">
-                <div class="finding-count high" id="findingsHigh">0</div>
-                <div class="finding-label">High</div>
-            </div>
-            <div class="finding-cell">
-                <div class="finding-count medium" id="findingsMedium">0</div>
-                <div class="finding-label">Medium</div>
-            </div>
-            <div class="finding-cell">
-                <div class="finding-count total" id="findingsTotal">0</div>
-                <div class="finding-label">Total Findings</div>
-            </div>
+            <div class="finding-cell" onclick="filterObs('critical')"><div class="finding-count critical" id="findingsCritical">0</div><div class="finding-label">Critical</div></div>
+            <div class="finding-cell" onclick="filterObs('high')"><div class="finding-count high" id="findingsHigh">0</div><div class="finding-label">High</div></div>
+            <div class="finding-cell" onclick="filterObs('medium')"><div class="finding-count medium" id="findingsMedium">0</div><div class="finding-label">Medium</div></div>
+            <div class="finding-cell" onclick="filterObs('all')"><div class="finding-count total" id="findingsTotal">0</div><div class="finding-label">Total Findings</div></div>
         </div>
-
-        <!-- Score + primary stats -->
         <div class="top-row" style="margin-bottom:12px;">
             <div class="score-card">
                 <div class="score-ring-wrap">
                     <svg width="80" height="80" viewBox="0 0 80 80">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#edebe9" stroke-width="6"/>
-                        <circle id="scoreRing" cx="40" cy="40" r="32" fill="none" stroke="#0078d4" stroke-width="6"
-                            stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"
-                            style="transition: stroke-dashoffset 0.8s ease"/>
+                        <circle id="scoreRing" cx="40" cy="40" r="32" fill="none" stroke="#0078d4" stroke-width="6" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" style="transition: stroke-dashoffset 0.8s ease"/>
                     </svg>
                     <div class="score-number" id="govScore">--</div>
                 </div>
@@ -632,143 +313,78 @@
                     <div class="score-meta-desc" id="scoreDesc">Loading posture data...</div>
                 </div>
             </div>
-
             <div class="stat-grid-primary">
-                <div class="stat-card">
-                    <div class="stat-label">Total users</div>
-                    <div class="stat-value" id="totalUsers">--</div>
-                    <div class="stat-foot">In directory</div>
-                </div>
+                <div class="stat-card"><div class="stat-label">Total users</div><div class="stat-value" id="totalUsers">--</div><div class="stat-foot">In directory</div></div>
                 <div class="stat-card clickable" onclick="showPage('disabled', document.querySelectorAll('.nav-btn')[4])">
                     <div class="stat-label">Disabled accounts</div>
                     <div class="stat-value" style="color:var(--orange)" id="disabledUsers">--</div>
                     <div class="stat-foot">Accounts</div>
-                    <div class="stat-link">View disabled users →</div>
+                    <div class="stat-link">View disabled users &rarr;</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Licensed users</div>
-                    <div class="stat-value" style="color:var(--blue)" id="licensedUsers">--</div>
-                    <div class="stat-foot">Active licenses</div>
-                </div>
+                <div class="stat-card"><div class="stat-label">Licensed users</div><div class="stat-value" style="color:var(--blue)" id="licensedUsers">--</div><div class="stat-foot">Active licenses</div></div>
             </div>
         </div>
-
-        <!-- Secondary stats -->
         <div class="stat-grid-secondary" style="margin-bottom:24px;">
-            <div class="stat-card">
-                <div class="stat-label">Active</div>
-                <div class="stat-value" style="color:var(--green)" id="activeUsers">--</div>
-                <div class="stat-foot">Enabled accounts</div>
+            <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value" style="color:var(--green)" id="activeUsers">--</div><div class="stat-foot">Enabled accounts</div></div>
+            <div class="stat-card"><div class="stat-label">Internal</div><div class="stat-value" id="internalUsers">--</div><div class="stat-foot">Member accounts</div></div>
+            <div class="stat-card"><div class="stat-label">Guests</div><div class="stat-value" id="guestUsers">--</div><div class="stat-foot">External users</div></div>
+            <div class="stat-card"><div class="stat-label">Privileged</div><div class="stat-value" style="color:var(--red)" id="privilegedUsers">--</div><div class="stat-foot">Role assignments</div></div>
+        </div>
+        <div class="score-breakdown">
+            <div class="score-breakdown-header"><div class="score-breakdown-title">Governance Score Breakdown</div></div>
+            <div class="score-breakdown-body" id="scoreBreakdownBody"></div>
+        </div>
+        <div class="ai-risk-card">
+            <div class="ai-risk-header">
+                <div class="ai-risk-title">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#0078d4" stroke-width="1.5"><path d="M8 1l2 5h5l-4 3 1.5 5L8 11l-4.5 3L5 9 1 6h5z"/></svg>
+                    AI Identity Risk Analysis <span class="ai-badge">Copilot</span>
+                </div>
+                <button class="exec-summary-btn" onclick="generateExecSummary()">Executive Summary</button>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Internal</div>
-                <div class="stat-value" id="internalUsers">--</div>
-                <div class="stat-foot">Member accounts</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Guests</div>
-                <div class="stat-value" id="guestUsers">--</div>
-                <div class="stat-foot">External users</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Privileged</div>
-                <div class="stat-value" style="color:var(--red)" id="privilegedUsers">--</div>
-                <div class="stat-foot">Role assignments</div>
+            <div class="ai-risk-body">
+                <div class="ai-risk-loading" id="aiRiskLoading">
+                    <svg class="spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0078d4" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                    Analyzing identity posture...
+                </div>
+                <div class="ai-risk-content" id="aiRiskContent" style="display:none;"></div>
             </div>
         </div>
-
-        <!-- Observations -->
         <div class="section">
-            <div class="section-header">
-                <div class="section-title">
-                    Governance observations
-                    <span class="section-count" id="obsCount"></span>
-                </div>
+            <div class="section-header"><div class="section-title">Governance observations <span class="section-count" id="obsCount"></span></div></div>
+            <div class="filter-bar" id="obsFilterBar">
+                <button class="filter-pill active" onclick="filterObs('all')">All</button>
+                <button class="filter-pill" onclick="filterObs('high')"><span class="filter-dot" style="background:var(--red)"></span>High</button>
+                <button class="filter-pill" onclick="filterObs('medium')"><span class="filter-dot" style="background:var(--orange)"></span>Medium</button>
+                <button class="filter-pill" onclick="filterObs('info')"><span class="filter-dot" style="background:var(--blue)"></span>Info</button>
             </div>
-
-            <div class="filter-bar">
-                <button class="filter-pill active" onclick="filterObs('all', this)">All</button>
-                <button class="filter-pill" onclick="filterObs('high', this)">
-                    <span class="filter-dot" style="background:var(--red)"></span>High
-                </button>
-                <button class="filter-pill" onclick="filterObs('medium', this)">
-                    <span class="filter-dot" style="background:var(--orange)"></span>Medium
-                </button>
-                <button class="filter-pill" onclick="filterObs('info', this)">
-                    <span class="filter-dot" style="background:var(--blue)"></span>Info
-                </button>
-            </div>
-
             <div class="obs-list" id="observations"></div>
         </div>
     </div>
-
-    <!-- Drift -->
     <div id="page-drift" class="page">
-        <div class="page-header">
-            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Drift Report</span></div>
-            <div class="page-title">Drift report</div>
-        </div>
-
+        <div class="page-header"><div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Drift Report</span></div><div class="page-title">Drift report</div></div>
         <div class="drift-period" id="driftPeriod">Loading...</div>
-
         <div class="delta-grid">
-            <div class="stat-card">
-                <div class="stat-label">Total users</div>
-                <div class="delta-value" id="deltaTotalUsers">--</div>
-                <div class="stat-foot">Week-over-week</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Disabled</div>
-                <div class="delta-value" id="deltaDisabled">--</div>
-                <div class="stat-foot">Week-over-week</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Guests</div>
-                <div class="delta-value" id="deltaGuests">--</div>
-                <div class="stat-foot">Week-over-week</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Governance score</div>
-                <div class="delta-value" id="deltaScore">--</div>
-                <div class="stat-foot">Week-over-week</div>
-            </div>
+            <div class="stat-card"><div class="stat-label">Total users</div><div class="delta-value" id="deltaTotalUsers">--</div><div class="stat-foot">Week-over-week</div></div>
+            <div class="stat-card"><div class="stat-label">Disabled</div><div class="delta-value" id="deltaDisabled">--</div><div class="stat-foot">Week-over-week</div></div>
+            <div class="stat-card"><div class="stat-label">Guests</div><div class="delta-value" id="deltaGuests">--</div><div class="stat-foot">Week-over-week</div></div>
+            <div class="stat-card"><div class="stat-label">Governance score</div><div class="delta-value" id="deltaScore">--</div><div class="stat-foot">Week-over-week</div></div>
         </div>
-
         <div class="section">
-            <div class="section-header">
-                <div class="section-title">Drift observations <span class="section-count" id="driftObsCount"></span></div>
-            </div>
+            <div class="section-header"><div class="section-title">Drift observations <span class="section-count" id="driftObsCount"></span></div></div>
             <div class="obs-list" id="driftObservations"></div>
         </div>
-
         <div class="two-col">
-            <div class="drift-list-card">
-                <div class="drift-list-header">New users this period</div>
-                <div id="newUsersList"></div>
-            </div>
-            <div class="drift-list-card">
-                <div class="drift-list-header">Newly disabled this period</div>
-                <div id="newlyDisabledList"></div>
-            </div>
+            <div class="drift-list-card"><div class="drift-list-header">New users this period</div><div id="newUsersList"></div></div>
+            <div class="drift-list-card"><div class="drift-list-header">Newly disabled this period</div><div id="newlyDisabledList"></div></div>
         </div>
     </div>
-
-    <!-- Privileged Access -->
     <div id="page-privileged" class="page">
-        <div class="page-header">
-            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Privileged Access</span></div>
-            <div class="page-title">Privileged access</div>
-        </div>
+        <div class="page-header"><div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Privileged Access</span></div><div class="page-title">Privileged access</div></div>
         <div class="role-grid" id="privilegedRoles"></div>
     </div>
-
-    <!-- All Users -->
     <div id="page-users" class="page">
-        <div class="page-header">
-            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>All Users</span></div>
-            <div class="page-title">All users</div>
-        </div>
+        <div class="page-header"><div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>All Users</span></div><div class="page-title">All users</div></div>
         <div class="table-wrap">
             <div class="table-toolbar">
                 <div class="toolbar-left">
@@ -779,413 +395,604 @@
                         <button class="view-toggle-btn" onclick="setUserView('guests', this)">Guests</button>
                     </div>
                 </div>
-                <div class="toolbar-right">
-                    <input class="search-input" type="text" id="searchInput"
-                        placeholder="Search name or UPN..." oninput="filterUsers()"/>
-                </div>
+                <div class="toolbar-right"><input class="search-input" type="text" id="searchInput" placeholder="Search name or UPN..." oninput="filterUsers()"/></div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Display name</th>
-                        <th>User principal name</th>
-                        <th>Type</th>
-                        <th>Department</th>
-                        <th>License</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                    </tr>
-                </thead>
-                <tbody id="userTable"></tbody>
-            </table>
+            <table><thead><tr><th>Display name</th><th>User principal name</th><th>Type</th><th>Department</th><th>License</th><th>Status</th><th>Created</th></tr></thead><tbody id="userTable"></tbody></table>
         </div>
     </div>
-
-    <!-- Disabled Users -->
     <div id="page-disabled" class="page">
-        <div class="page-header">
-            <div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Disabled Users</span></div>
-            <div class="page-title">Disabled users</div>
-        </div>
-
-        <!-- Disabled summary stats -->
+        <div class="page-header"><div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Disabled Users</span></div><div class="page-title">Disabled users</div></div>
         <div class="stat-grid-secondary" style="margin-bottom:24px;">
-            <div class="stat-card">
-                <div class="stat-label">Total disabled</div>
-                <div class="stat-value" style="color:var(--orange)" id="disabledTotal">--</div>
-                <div class="stat-foot">Accounts</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Disabled with license</div>
-                <div class="stat-value" style="color:var(--red)" id="disabledWithLicense">--</div>
-                <div class="stat-foot">Active license waste</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Disabled internal</div>
-                <div class="stat-value" id="disabledInternal">--</div>
-                <div class="stat-foot">Member accounts</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Disabled guests</div>
-                <div class="stat-value" id="disabledGuests">--</div>
-                <div class="stat-foot">External accounts</div>
-            </div>
+            <div class="stat-card"><div class="stat-label">Total disabled</div><div class="stat-value" style="color:var(--orange)" id="disabledTotal">--</div><div class="stat-foot">Accounts</div></div>
+            <div class="stat-card"><div class="stat-label">Disabled with license</div><div class="stat-value" style="color:var(--red)" id="disabledWithLicense">--</div><div class="stat-foot">Active license waste</div></div>
+            <div class="stat-card"><div class="stat-label">Disabled internal</div><div class="stat-value" id="disabledInternal">--</div><div class="stat-foot">Member accounts</div></div>
+            <div class="stat-card"><div class="stat-label">Disabled guests</div><div class="stat-value" id="disabledGuests">--</div><div class="stat-foot">External accounts</div></div>
         </div>
-
         <div class="table-wrap">
             <div class="table-toolbar">
                 <div class="toolbar-left">
                     <span class="table-count" id="disabledCount">Loading...</span>
                     <div class="filter-bar" style="margin:0;">
                         <button class="filter-pill active" onclick="filterDisabled('all', this)">All</button>
-                        <button class="filter-pill" onclick="filterDisabled('licensed', this)">
-                            <span class="filter-dot" style="background:var(--red)"></span>Has License
-                        </button>
-                        <button class="filter-pill" onclick="filterDisabled('internal', this)">
-                            <span class="filter-dot" style="background:var(--blue)"></span>Internal
-                        </button>
-                        <button class="filter-pill" onclick="filterDisabled('guest', this)">
-                            <span class="filter-dot" style="background:var(--orange)"></span>Guest
-                        </button>
+                        <button class="filter-pill" onclick="filterDisabled('licensed', this)"><span class="filter-dot" style="background:var(--red)"></span>Has License</button>
+                        <button class="filter-pill" onclick="filterDisabled('internal', this)"><span class="filter-dot" style="background:var(--blue)"></span>Internal</button>
+                        <button class="filter-pill" onclick="filterDisabled('guest', this)"><span class="filter-dot" style="background:var(--orange)"></span>Guest</button>
                     </div>
                 </div>
-                <div class="toolbar-right">
-                    <input class="search-input" type="text" id="disabledSearch"
-                        placeholder="Search disabled users..." oninput="searchDisabled()"/>
-                </div>
+                <div class="toolbar-right"><input class="search-input" type="text" id="disabledSearch" placeholder="Search disabled users..." oninput="searchDisabled()"/></div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Severity</th>
-                        <th>Display name</th>
-                        <th>UPN</th>
-                        <th>Type</th>
-                        <th>Department</th>
-                        <th>License</th>
-                        <th>Issue</th>
-                    </tr>
-                </thead>
-                <tbody id="disabledTable"></tbody>
-            </table>
+            <table><thead><tr><th>Severity</th><th>Display name</th><th>UPN</th><th>Type</th><th>Department</th><th>License</th><th>Issue</th></tr></thead><tbody id="disabledTable"></tbody></table>
         </div>
     </div>
-
+    <div id="page-trends" class="page">
+        <div class="page-header"><div class="breadcrumb">Identity Governance &nbsp;/&nbsp; <span>Trends</span></div><div class="page-title">Historical trends</div></div>
+        <div class="charts-grid">
+            <div class="chart-card"><div class="chart-title">Governance Score</div><div class="chart-wrap"><canvas id="chartScore"></canvas></div></div>
+            <div class="chart-card"><div class="chart-title">Total Users</div><div class="chart-wrap"><canvas id="chartUsers"></canvas></div></div>
+            <div class="chart-card"><div class="chart-title">Disabled Users</div><div class="chart-wrap"><canvas id="chartDisabled"></canvas></div></div>
+            <div class="chart-card"><div class="chart-title">Privileged Accounts</div><div class="chart-wrap"><canvas id="chartPrivileged"></canvas></div></div>
+        </div>
+    </div>
 </main>
-
+<div class="finding-panel-overlay" id="findingPanelOverlay" onclick="closeFindingPanel(event)">
+    <div class="finding-panel" id="findingPanel">
+        <div class="finding-panel-header">
+            <div class="finding-panel-title" id="findingPanelTitle">Finding Detail</div>
+            <button class="finding-panel-close" onclick="closeFindingPanelDirect()">&#x2715;</button>
+        </div>
+        <div class="finding-panel-body" id="findingPanelBody"></div>
+    </div>
+</div>
+<button class="copilot-fab" onclick="toggleCopilot()" title="Open AI Copilot">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>
+</button>
+<div class="copilot-panel" id="copilotPanel">
+    <div class="copilot-header">
+        <div class="copilot-header-left">
+            <div class="copilot-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>
+            <div><div class="copilot-title">Identity Copilot</div><div class="copilot-subtitle">Powered by Claude</div></div>
+        </div>
+        <div class="copilot-header-actions">
+            <button class="copilot-icon-btn" onclick="clearChat()" title="New conversation"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h8M2 12h5"/></svg></button>
+            <button class="copilot-icon-btn" onclick="toggleCopilot()" title="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4L4 12M4 4l8 8"/></svg></button>
+        </div>
+    </div>
+    <div class="copilot-context-bar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg><span id="copilotContextLabel">Viewing: Overview</span></div>
+    <div class="copilot-messages" id="copilotMessages">
+        <div class="copilot-welcome">
+            <div class="copilot-welcome-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>
+            <h3>Identity Governance Copilot</h3>
+            <p>Ask me anything about your tenant's identity posture, drift, privileged access, or governance risks.</p>
+            <div class="suggested-prompts" id="suggestedPrompts"></div>
+            <button class="analyze-btn" onclick="analyzeCurrentPage()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8h6M8 5v6"/></svg>Analyze Current Page</button>
+        </div>
+    </div>
+    <div class="copilot-footer">
+        <div class="copilot-input-wrap">
+            <textarea class="copilot-input" id="copilotInput" placeholder="Ask about your identity posture..." rows="1" onkeydown="handleCopilotKey(event)" oninput="autoResize(this)"></textarea>
+            <button class="copilot-send" id="copilotSend" onclick="sendCopilotMessage()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2L2 7l5 2 2 5z"/></svg></button>
+        </div>
+        <div class="copilot-hint">Responses grounded in your snapshot data only</div>
+    </div>
+</div>
 <script>
-    let snapshotData  = null
-    let driftData     = null
-    let allUsers      = []
-    let disabledUsers = []
-    let currentUserView    = 'all'
-    let currentDisabledFilter = 'all'
+    var COPILOT_ENDPOINT = 'YOUR_AZURE_FUNCTION_URL_HERE';
+    var snapshotData = null, driftData = null, allUsers = [];
+    var currentPage = 'overview', currentUserView = 'all', currentDisabledFilter = 'all';
+    var copilotOpen = false, chatHistory = [], isAiLoading = false, trendCharts = {};
 
-    async function loadData() {
+    var TREND_DATA = {
+        labels: ['Week 1','Week 2','Week 3','Week 4','Current'],
+        score: [95,92,88,90,90],
+        totalUsers: [18,19,20,20,21],
+        disabled: [1,1,1,2,2],
+        privileged: [2,2,2,2,2]
+    };
+
+    var PAGE_PROMPTS = {
+        overview: ['What are my biggest identity risks?','Why is my governance score at this level?','Which users concern you most?'],
+        drift: ['Explain these changes since last week.','Is any of this drift concerning?','Summarize what changed.'],
+        privileged: ['Are any of these role assignments unusual?','Which privileged accounts should be reviewed?'],
+        users: ['Which users have unusual access patterns?','Are there any accounts that should be reviewed?'],
+        disabled: ['What is the risk of these disabled accounts?','Which disabled accounts need immediate attention?'],
+        trends: ['What does this trend tell you?','Are these trends concerning?','What should I watch out for?']
+    };
+
+    var FINDING_DETAILS = {
+        'DISABLED_USERS_EXIST': {
+            risk: 'Disabled accounts still present in the directory expand the attack surface. If re-enabled improperly or targeted in enumeration attacks, they represent a real access risk.',
+            impact: 'medium',
+            businessImpact: 'Increases audit risk and potential re-activation exposure. May violate offboarding policies.',
+            remediation: 'Confirm both accounts are fully offboarded. Remove group memberships, revoke sessions, and archive or delete per your retention policy.',
+            bestPractice: 'Microsoft recommends deleting accounts within 30 days of offboarding unless legal hold requires retention.'
+        },
+        'DISABLED_WITH_LICENSE': {
+            risk: 'A disabled account retaining an active Microsoft 365 license is both a cost leak and a security gap. Licensed accounts may retain access to shared resources, delegated permissions, or app registrations.',
+            impact: 'critical',
+            businessImpact: 'Direct monthly license cost waste. Potential unauthorized access to shared mailboxes or Teams resources.',
+            remediation: 'Revoke the license immediately from the disabled account. Audit any delegated permissions, shared mailbox access, or app registrations tied to this account.',
+            bestPractice: 'Microsoft recommends removing licenses at the time of account disable. Use lifecycle workflows in Entra ID to automate this.'
+        },
+        'NO_GUEST_USERS': {
+            risk: 'No guest users detected. This is a positive finding.',
+            impact: 'low',
+            businessImpact: 'No external collaboration risk at this time.',
+            remediation: 'No action required. Monitor for guest account additions in future scans.',
+            bestPractice: 'When guest accounts are added, ensure Entra ID External Identities policies enforce MFA and access reviews.'
+        },
+        'HIGH_PRIVILEGED_USER_COUNT': {
+            risk: 'Too many privileged users increases the blast radius of a compromised credential.',
+            impact: 'high',
+            businessImpact: 'Excessive privilege violates least-privilege principles and is a common audit finding.',
+            remediation: 'Review all privileged role assignments. Remove roles not actively needed. Consider PIM for just-in-time elevation.',
+            bestPractice: 'Microsoft recommends no more than 2-4 Global Administrators, all protected with phishing-resistant MFA.'
+        }
+    };
+
+    function buildContext(page) {
+        if (!snapshotData) return {};
+        var base = {
+            snapshotDate: snapshotData.snapshotMetadata.snapshotDate,
+            tenantDomain: snapshotData.snapshotMetadata.tenantDomain,
+            governanceScore: snapshotData.summary.governanceScore,
+            summary: snapshotData.summary,
+            observations: snapshotData.governanceObservations
+        };
+        if (page === 'overview') {
+            base.licensedUsers = allUsers.filter(function(u){return u.hasLicense;}).length;
+            base.internalUsers = allUsers.filter(function(u){return u.userType==='Member';}).length;
+            base.disabledWithLic = allUsers.filter(function(u){return !u.accountEnabled && u.hasLicense;}).map(function(u){return {displayName:u.displayName,upn:u.userPrincipalName,department:u.department};});
+        } else if (page === 'drift' && driftData) {
+            base.driftPeriod = {from:driftData.reportMetadata.previousSnapshot,to:driftData.reportMetadata.currentSnapshot};
+            base.summaryDelta = driftData.summaryDelta;
+            base.driftObservations = driftData.driftObservations;
+            base.newUsers = driftData.userDelta.newUsers;
+            base.newlyDisabled = driftData.userDelta.newlyDisabled;
+            base.newPrivileged = driftData.privilegedAccessDelta.newPrivilegedAssignments;
+        } else if (page === 'privileged') {
+            base.directoryRoles = snapshotData.directoryRoles.map(function(r){
+                var valid = Array.isArray(r.members)?r.members.filter(function(m){return m&&m.userPrincipalName;}):[]; 
+                return {roleName:r.roleName,memberCount:valid.length,members:valid.map(function(m){return {displayName:m.displayName,upn:m.userPrincipalName};})};
+            });
+        } else if (page === 'users') {
+            base.users = allUsers.map(function(u){return {displayName:u.displayName,upn:u.userPrincipalName,type:u.userType,department:u.department||'Unknown',hasLicense:u.hasLicense,enabled:u.accountEnabled};});
+        } else if (page === 'disabled') {
+            base.disabledUsers = allUsers.filter(function(u){return !u.accountEnabled;}).map(function(u){return {displayName:u.displayName,upn:u.userPrincipalName,type:u.userType,department:u.department||'Unknown',hasLicense:u.hasLicense,severity:u.hasLicense?'CRITICAL':u.userType==='Member'?'HIGH':'MEDIUM'};});
+        } else if (page === 'trends') {
+            base.trendData = TREND_DATA;
+        }
+        return base;
+    }
+
+    function generateAiRiskAnalysis(snap) {
+        if (!snap || !COPILOT_ENDPOINT || COPILOT_ENDPOINT === 'YOUR_AZURE_FUNCTION_URL_HERE') return;
+        var loadingEl = document.getElementById('aiRiskLoading');
+        var contentEl = document.getElementById('aiRiskContent');
+		if (!loadingEl || !contentEl) {
+            setTimeout(function() { generateAiRiskAnalysis(snap); }, 200);
+            return;
+        }
+        loadingEl.style.display = 'flex';
+        contentEl.style.display = 'none';
+		
+        var context = {
+            snapshotDate: snap.snapshotMetadata.snapshotDate,
+            tenantDomain: snap.snapshotMetadata.tenantDomain,
+            governanceScore: snap.summary.governanceScore,
+            summary: snap.summary,
+            observations: snap.governanceObservations,
+            licensedUsers: snap.users.filter(function(u){return u.hasLicense;}).length,
+            internalUsers: snap.users.filter(function(u){return u.userType==='Member';}).length,
+            disabledWithLic: snap.users.filter(function(u){return !u.accountEnabled&&u.hasLicense;}).map(function(u){return {displayName:u.displayName,upn:u.userPrincipalName,department:u.department};})
+        };
+        fetch(COPILOT_ENDPOINT, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                messages: [{role:'user',content:'List the top identity risks in this tenant. Lead with the most critical. Reference specific users by name and UPN. Be direct and concise. Maximum 120 words.'}],
+                systemPrompt: 'You are an Identity Governance Analyst for Microsoft Entra ID. Analyze strictly from the provided context. Never hallucinate. No markdown headers. Plain text only. Enterprise analyst tone.\n\nCONTEXT:\n' + JSON.stringify(context,null,2),
+                pageContext: 'overview'
+            })
+        }).then(function(r){
+            if (!r.ok) throw new Error('HTTP '+r.status);
+            return r.json();
+        }).then(function(data){
+            loadingEl.style.display = 'none';
+            contentEl.style.display = 'block';
+            contentEl.textContent = data.response;
+        }).catch(function(err){
+            console.error('AI Risk error:', err);
+            loadingEl.style.display = 'none';
+            contentEl.style.display = 'block';
+            contentEl.textContent = 'Unable to generate risk analysis.';
+        });
+    }
+
+    function callAI(messages, systemPrompt) {
+        return fetch(COPILOT_ENDPOINT, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({messages:messages,systemPrompt:systemPrompt,pageContext:currentPage})
+        }).then(function(r){
+            if (!r.ok) throw new Error('HTTP '+r.status);
+            return r.json();
+        }).then(function(data){return data.response;});
+    }
+
+    function buildSystemPrompt(context) {
+        return 'You are an Identity Governance Analyst for Microsoft Entra ID.\nRULES:\n- Stay grounded strictly in the CONTEXT data\n- Never hallucinate\n- Lead with risks\n- Be concise and direct\n- Reference specific users and data points\n- Enterprise analyst tone\n\nCONTEXT:\n' + JSON.stringify(context,null,2);
+    }
+
+    async function generateExecSummary() {
+        if (!snapshotData) return;
+        toggleCopilot(true);
+        var context = buildContext('overview');
+        if (driftData) context.drift = buildContext('drift');
+        var prompt = 'Write a clean executive summary. Format exactly like this:\n\nScore: X/100 \u2014 [Healthy/Moderate/At Risk]\nSnapshot: [date]\n\nKey facts:\n- [fact]\n- [fact]\n- [fact]\n\nAction required:\n- [action]\n- [action]\n\nMaximum 80 words. No markdown. Plain text only.';
+        addUserMessage('Executive Summary', true);
+        await streamAiResponse(prompt, context);
+    }
+
+    async function analyzeCurrentPage() {
+        if (!snapshotData) return;
+        var pageNames = {overview:'Overview',drift:'Drift Report',privileged:'Privileged Access',users:'All Users',disabled:'Disabled Users',trends:'Trends'};
+        var prompt = 'Analyze the ' + (pageNames[currentPage]||currentPage) + ' data. Lead with the most critical finding. Be direct and concise. Reference specific users or data points. Maximum 120 words.';
+        addUserMessage('Analyze current page', true);
+        await streamAiResponse(prompt, buildContext(currentPage));
+    }
+
+    function addUserMessage(text, display) {
+        if (!display) return;
+        var msgs = document.getElementById('copilotMessages');
+        var welcome = msgs.querySelector('.copilot-welcome');
+        if (welcome) welcome.remove();
+        var time = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        var el = document.createElement('div');
+        el.className = 'msg user';
+        el.innerHTML = '<div class="msg-bubble">'+escapeHtml(text)+'</div><div class="msg-time">'+time+'</div>';
+        msgs.appendChild(el);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+        var msgs = document.getElementById('copilotMessages');
+        var el = document.createElement('div');
+        el.className = 'msg assistant'; el.id = 'typingIndicator';
+        el.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+        msgs.appendChild(el); msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function removeTypingIndicator() { var el=document.getElementById('typingIndicator'); if(el) el.remove(); }
+
+    function addAssistantMessage(text) {
+        var msgs = document.getElementById('copilotMessages');
+        var time = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        var el = document.createElement('div');
+        el.className = 'msg assistant';
+        el.innerHTML = '<div class="msg-bubble">'+escapeHtml(text)+'</div><div class="msg-time">'+time+'</div>';
+        msgs.appendChild(el); msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    async function streamAiResponse(prompt, context) {
+        isAiLoading = true;
+        document.getElementById('copilotSend').disabled = true;
+        addTypingIndicator();
         try {
-            const snapRes  = await fetch('http://localhost:3000/snapshots/sample/identity-snapshot-2026-06-23.json')
-            const driftRes = await fetch('http://localhost:3000/snapshots/sample/drift-report-2026-06-22.json')
-            snapshotData  = await snapRes.json()
-            driftData     = await driftRes.json()
-            allUsers      = snapshotData.users
-            disabledUsers = allUsers.filter(u => !u.accountEnabled)
-            renderOverview()
-            renderDrift()
-            renderPrivileged()
-            renderUsers()
-            renderDisabled()
-        } catch (err) {
-            console.error('Load failed:', err)
-            document.getElementById('snapshotDate').textContent = 'Error'
+            chatHistory.push({role:'user',content:prompt});
+            var text = await callAI(chatHistory, buildSystemPrompt(context));
+            chatHistory.push({role:'assistant',content:text});
+            removeTypingIndicator();
+            addAssistantMessage(text);
+        } catch(err) {
+            removeTypingIndicator();
+            addAssistantMessage('I encountered an error. Please try again.');
+            console.error('Copilot error:', err);
+        } finally {
+            isAiLoading = false;
+            document.getElementById('copilotSend').disabled = false;
+            document.getElementById('copilotMessages').scrollTop = 99999;
         }
     }
 
-    /* ── OVERVIEW ── */
-    function renderOverview() {
-        const s = snapshotData
-        document.getElementById('snapshotDate').textContent = s.snapshotMetadata.snapshotDate
-
-        const licensed    = allUsers.filter(u => u.hasLicense).length
-        const internal    = allUsers.filter(u => u.userType === 'Member').length
-        const guests      = allUsers.filter(u => u.userType === 'Guest').length
-
-        document.getElementById('totalUsers').textContent      = s.summary.totalUsers
-        document.getElementById('activeUsers').textContent     = s.summary.activeUsers
-        document.getElementById('disabledUsers').textContent   = s.summary.disabledUsers
-        document.getElementById('guestUsers').textContent      = guests
-        document.getElementById('internalUsers').textContent   = internal
-        document.getElementById('privilegedUsers').textContent = s.summary.privilegedUsers
-        document.getElementById('licensedUsers').textContent   = licensed
-
-        const score = s.summary.governanceScore
-        document.getElementById('govScore').textContent = score
-
-        const ring   = document.getElementById('scoreRing')
-        const offset = 201 - (201 * score / 100)
-        setTimeout(() => { ring.style.strokeDashoffset = offset }, 100)
-
-        const ringColor = score >= 80 ? '#107c10' : score >= 60 ? '#ca5010' : '#d83b01'
-        ring.style.stroke = ringColor
-        document.getElementById('govScore').style.color = ringColor
-
-        document.getElementById('scoreTitle').textContent = score >= 80 ? 'Healthy posture' : score >= 60 ? 'Moderate risk' : 'High risk'
-        document.getElementById('scoreDesc').textContent  = score >= 80
-            ? 'No critical findings detected in this snapshot.'
-            : score >= 60 ? 'Review flagged observations and remediate.'
-            : 'Immediate attention required on flagged items.'
-
-        const obs = s.governanceObservations
-        const critical = obs.filter(o => o.severity === 'high' || o.severity === 'critical').length
-        const high     = obs.filter(o => o.severity === 'high').length
-        const medium   = obs.filter(o => o.severity === 'medium').length
-
-        document.getElementById('findingsCritical').textContent = critical
-        document.getElementById('findingsHigh').textContent     = high
-        document.getElementById('findingsMedium').textContent   = medium
-        document.getElementById('findingsTotal').textContent    = obs.length
-        document.getElementById('obsCount').textContent         = '(' + obs.length + ')'
-
-        renderObservations(obs, 'all')
+    async function sendCopilotMessage() {
+        var input = document.getElementById('copilotInput');
+        var text = input.value.trim();
+        if (!text || isAiLoading) return;
+        input.value = ''; input.style.height = 'auto';
+        toggleCopilot(true);
+        addUserMessage(text, true);
+        await streamAiResponse(text, buildContext(currentPage));
     }
 
-    function renderObservations(obs, filter) {
-        const el = document.getElementById('observations')
-        el.innerHTML = obs.map(o => {
-            const hidden = filter !== 'all' && o.severity !== filter ? ' hidden' : ''
-            const iconSvg = o.severity === 'high'
-                ? '<svg class="obs-icon high" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>'
-                : o.severity === 'medium'
-                ? '<svg class="obs-icon medium" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>'
-                : '<svg class="obs-icon info" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 7v5M8 4v1"/></svg>'
-            return '<div class="obs-item' + hidden + '" data-severity="' + o.severity + '">' +
-                iconSvg +
-                '<div class="obs-body">' +
-                    '<div class="obs-severity ' + o.severity + '">' + o.severity + '</div>' +
-                    '<div class="obs-message">' + o.message + '</div>' +
-                '</div></div>'
+    function handleCopilotKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendCopilotMessage();} }
+    function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+
+    function clearChat() {
+        chatHistory = [];
+        document.getElementById('copilotMessages').innerHTML =
+            '<div class="copilot-welcome"><div class="copilot-welcome-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>'+
+            '<h3>Identity Governance Copilot</h3><p>Ask me anything about your tenant identity posture.</p>'+
+            '<div class="suggested-prompts" id="suggestedPrompts"></div>'+
+            '<button class="analyze-btn" onclick="analyzeCurrentPage()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8h6M8 5v6"/></svg>Analyze Current Page</button></div>';
+        updateSuggestedPrompts();
+    }
+
+    function toggleCopilot(forceOpen) {
+        copilotOpen = forceOpen!==undefined ? forceOpen : !copilotOpen;
+        document.getElementById('copilotPanel').classList.toggle('open', copilotOpen);
+        document.getElementById('mainContent').classList.toggle('copilot-open', copilotOpen);
+        if (copilotOpen) { updateSuggestedPrompts(); setTimeout(function(){document.getElementById('copilotInput').focus();},300); }
+    }
+
+    function updateSuggestedPrompts() {
+        var container = document.getElementById('suggestedPrompts');
+        if (!container) return;
+        var prompts = PAGE_PROMPTS[currentPage] || PAGE_PROMPTS.overview;
+        var html = '';
+        for (var i = 0; i < prompts.length; i++) {
+            html += '<button class="suggested-prompt" onclick="useSuggestedPrompt(this.dataset.prompt)" data-prompt="' + prompts[i].replace(/"/g, '&quot;') + '">' + prompts[i] + '</button>';
+        }
+        container.innerHTML = html;
+    }
+
+    function useSuggestedPrompt(text) { document.getElementById('copilotInput').value = text; sendCopilotMessage(); }
+    function escapeHtml(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+
+    function openObsFinding(idx) {
+        if (snapshotData && snapshotData.governanceObservations && snapshotData.governanceObservations[idx]) {
+            openFindingPanel(snapshotData.governanceObservations[idx]);
+        }
+    }
+
+    function openFindingPanel(obs) {
+        var detail = FINDING_DETAILS[obs.code] || {risk:obs.message,impact:obs.severity,businessImpact:'Review and remediate.',remediation:'Investigate affected accounts.',bestPractice:'Follow Microsoft identity security best practices.'};
+        document.getElementById('findingPanelTitle').textContent = obs.message;
+        var affected = obs.affectedUsers && obs.affectedUsers.length > 0
+            ? '<div><div class="finding-panel-section-label">Affected Accounts</div><div class="finding-panel-users">'+obs.affectedUsers.map(function(u){return '<div class="finding-panel-user">'+u+'</div>';}).join('')+'</div></div>' : '';
+        document.getElementById('findingPanelBody').innerHTML =
+            '<div><div class="finding-panel-section-label">Risk Level</div><span class="finding-impact-badge '+detail.impact+'">'+detail.impact.toUpperCase()+'</span></div>'+
+            '<div><div class="finding-panel-section-label">Why This Is a Risk</div><div class="finding-panel-text">'+detail.risk+'</div></div>'+
+            affected+
+            '<div><div class="finding-panel-section-label">Business Impact</div><div class="finding-panel-text">'+detail.businessImpact+'</div></div>'+
+            '<div><div class="finding-panel-section-label">Recommended Remediation</div><div class="finding-panel-text">'+detail.remediation+'</div></div>'+
+            '<div><div class="finding-panel-section-label">Microsoft Best Practice</div><div class="finding-panel-text">'+detail.bestPractice+'</div></div>';
+        document.getElementById('findingPanelOverlay').classList.add('open');
+    }
+
+    function closeFindingPanel(e) { if(e.target===document.getElementById('findingPanelOverlay')) document.getElementById('findingPanelOverlay').classList.remove('open'); }
+    function closeFindingPanelDirect() { document.getElementById('findingPanelOverlay').classList.remove('open'); }
+
+    function renderScoreBreakdown(snap) {
+        var rules = [
+            {label:'Base score',points:100,type:'base',condition:true},
+            {label:'Disabled accounts exist',points:-10,type:'deduction',condition:snap.summary.disabledUsers>0},
+            {label:'Disabled user holds active license',points:-10,type:'deduction',condition:snap.users.filter(function(u){return !u.accountEnabled&&u.hasLicense;}).length>0},
+            {label:'Guest accounts exceed 5',points:-10,type:'deduction',condition:snap.summary.guestUsers>5},
+            {label:'Privileged users exceed 2',points:-20,type:'deduction',condition:snap.summary.privilegedUsers>2}
+        ];
+        var html = '';
+        rules.forEach(function(r) {
+            if (!r.condition) return;
+            var isD = r.type==='deduction';
+            var bw = isD ? (Math.abs(r.points)) : 100;
+            html += '<div class="score-breakdown-row">'+
+                '<div class="score-breakdown-label">'+r.label+'</div>'+
+                '<div class="score-bar-wrap"><div class="score-bar-fill '+(isD?'red':'green')+'" style="width:'+bw+'%"></div></div>'+
+                '<div class="score-breakdown-value '+(isD?'deduction':'ok')+'">'+(isD?'-'+Math.abs(r.points):'+'+Math.abs(r.points))+'</div>'+
+            '</div>';
+        });
+        var totalD = rules.filter(function(r){return r.type==='deduction'&&r.condition;}).reduce(function(s,r){return s+Math.abs(r.points);},0);
+        html += '<div class="score-total-row"><div class="score-total-label">Final Governance Score</div><div class="score-total-value">'+Math.max(0,100-totalD)+' / 100</div></div>';
+        document.getElementById('scoreBreakdownBody').innerHTML = html;
+    }
+
+    function renderTrendCharts() {
+        var opts = {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#edebe9'},ticks:{font:{size:10},color:'#8a8886'}},y:{grid:{color:'#edebe9'},ticks:{font:{size:10},color:'#8a8886'}}}};
+        function mkChart(id, label, data, color) {
+            var el = document.getElementById(id); if (!el) return null;
+            return new Chart(el, {type:'line',data:{labels:TREND_DATA.labels,datasets:[{label:label,data:data,borderColor:color,backgroundColor:color+'20',borderWidth:2,pointRadius:3,pointBackgroundColor:color,tension:0.3,fill:true}]},options:opts});
+        }
+        if (trendCharts.score) trendCharts.score.destroy();
+        if (trendCharts.users) trendCharts.users.destroy();
+        if (trendCharts.disabled) trendCharts.disabled.destroy();
+        if (trendCharts.privileged) trendCharts.privileged.destroy();
+        trendCharts.score = mkChart('chartScore','Score',TREND_DATA.score,'#0078d4');
+        trendCharts.users = mkChart('chartUsers','Users',TREND_DATA.totalUsers,'#107c10');
+        trendCharts.disabled = mkChart('chartDisabled','Disabled',TREND_DATA.disabled,'#ca5010');
+        trendCharts.privileged = mkChart('chartPrivileged','Privileged',TREND_DATA.privileged,'#d83b01');
+    }
+
+    function loadData() {
+        Promise.all([
+            fetch('http://localhost:3000/snapshots/sample/identity-snapshot-2026-06-23.json').then(function(r){return r.json();}),
+            fetch('http://localhost:3000/snapshots/sample/drift-report-2026-06-22.json').then(function(r){return r.json();})
+        ]).then(function(results) {
+            snapshotData = results[0];
+            driftData    = results[1];
+            allUsers     = snapshotData.users;
+            renderOverview(snapshotData);
+            renderDrift();
+            renderPrivileged();
+            renderUsers();
+            renderDisabled();
+            renderScoreBreakdown(snapshotData);
+            generateAiRiskAnalysis(snapshotData);
+        }).catch(function(err) {
+            console.error('Load failed:', err);
+            document.getElementById('snapshotDate').textContent = 'Error loading data';
+        });
+    }
+
+    function renderOverview(snap) {
+        document.getElementById('snapshotDate').textContent = snap.snapshotMetadata.snapshotDate;
+        document.getElementById('totalUsers').textContent = snap.summary.totalUsers;
+        document.getElementById('activeUsers').textContent = snap.summary.activeUsers;
+        document.getElementById('disabledUsers').textContent = snap.summary.disabledUsers;
+        document.getElementById('guestUsers').textContent = allUsers.filter(function(u){return u.userType==='Guest';}).length;
+        document.getElementById('internalUsers').textContent = allUsers.filter(function(u){return u.userType==='Member';}).length;
+        document.getElementById('privilegedUsers').textContent = snap.summary.privilegedUsers;
+        document.getElementById('licensedUsers').textContent = allUsers.filter(function(u){return u.hasLicense;}).length;
+        var score = snap.summary.governanceScore;
+        document.getElementById('govScore').textContent = score;
+        var ring = document.getElementById('scoreRing');
+        setTimeout(function(){ring.style.strokeDashoffset = 201-(201*score/100);},100);
+        var rc = score>=80?'#107c10':score>=60?'#ca5010':'#d83b01';
+        ring.style.stroke = rc;
+        document.getElementById('govScore').style.color = rc;
+        document.getElementById('scoreTitle').textContent = score>=80?'Healthy posture':score>=60?'Moderate risk':'High risk';
+        document.getElementById('scoreDesc').textContent = score>=80?'No critical findings detected.':score>=60?'Review flagged observations.':'Immediate attention required.';
+        var obs = snap.governanceObservations;
+        document.getElementById('findingsCritical').textContent = obs.filter(function(o){return o.severity==='critical';}).length;
+        document.getElementById('findingsHigh').textContent = obs.filter(function(o){return o.severity==='high';}).length;
+        document.getElementById('findingsMedium').textContent = obs.filter(function(o){return o.severity==='medium';}).length;
+        document.getElementById('findingsTotal').textContent = obs.length;
+        document.getElementById('obsCount').textContent = '('+obs.length+')';
+        document.getElementById('observations').innerHTML = obs.map(function(o, idx) {
+            return '<div class="obs-item" data-severity="'+o.severity+'" data-idx="'+idx+'" onclick="openObsFinding('+idx+')">' +
+                '<svg class="obs-icon '+o.severity+'" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>' +
+                '<div class="obs-body"><div class="obs-severity '+o.severity+'">'+o.severity+'</div>' +
+                '<div class="obs-message">'+o.message+'</div>' +
+                '<div class="obs-click-hint">Click to view details and remediation</div></div></div>';
         }).join('')
     }
 
-    function filterObs(severity, btn) {
-        document.querySelectorAll('.filter-bar .filter-pill').forEach(b => b.classList.remove('active'))
-        btn.classList.add('active')
-        document.querySelectorAll('#observations .obs-item').forEach(el => {
-            el.classList.toggle('hidden', severity !== 'all' && el.dataset.severity !== severity)
-        })
+    function filterObs(severity) {
+        document.querySelectorAll('#obsFilterBar .filter-pill').forEach(function(b){b.classList.remove('active');});
+        var pills = document.querySelectorAll('#obsFilterBar .filter-pill');
+        var map = {'all':0,'high':1,'medium':2,'info':3};
+        if (map[severity]!==undefined && pills[map[severity]]) pills[map[severity]].classList.add('active');
+        document.querySelectorAll('#observations .obs-item').forEach(function(el){
+            el.classList.toggle('hidden', severity!=='all' && el.dataset.severity!==severity);
+        });
     }
 
-    /* ── ALL USERS ── */
-    function renderUsers() { renderUserTable(applyUserView(allUsers)) }
-
+    function renderUsers() { renderUserTable(applyUserView(allUsers)); }
     function applyUserView(users) {
-        if (currentUserView === 'internal') return users.filter(u => u.userType === 'Member')
-        if (currentUserView === 'guests')   return users.filter(u => u.userType === 'Guest')
-        return users
+        if (currentUserView==='internal') return users.filter(function(u){return u.userType==='Member';});
+        if (currentUserView==='guests') return users.filter(function(u){return u.userType==='Guest';});
+        return users;
     }
-
     function setUserView(view, btn) {
-        currentUserView = view
-        document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'))
-        btn.classList.add('active')
-        document.getElementById('searchInput').value = ''
-        renderUserTable(applyUserView(allUsers))
+        currentUserView = view;
+        document.querySelectorAll('.view-toggle-btn').forEach(function(b){b.classList.remove('active');});
+        btn.classList.add('active');
+        document.getElementById('searchInput').value = '';
+        renderUserTable(applyUserView(allUsers));
     }
-
     function filterUsers() {
-        const q = document.getElementById('searchInput').value.toLowerCase()
-        renderUserTable(applyUserView(allUsers).filter(u =>
-            u.displayName.toLowerCase().includes(q) ||
-            u.userPrincipalName.toLowerCase().includes(q)
-        ))
+        var q = document.getElementById('searchInput').value.toLowerCase();
+        renderUserTable(applyUserView(allUsers).filter(function(u){return u.displayName.toLowerCase().includes(q)||u.userPrincipalName.toLowerCase().includes(q);}));
     }
-
     function renderUserTable(users) {
-        document.getElementById('userCount').textContent = 'Showing ' + users.length + ' user' + (users.length !== 1 ? 's' : '')
-        document.getElementById('userTable').innerHTML = users.map(u => {
-            const statusCls  = u.accountEnabled ? 'enabled' : 'disabled'
-            const statusTxt  = u.accountEnabled ? 'Enabled' : 'Disabled'
-            const typeCls    = u.userType === 'Guest' ? 'guest' : 'internal'
-            const licenseCls = u.hasLicense ? 'yes' : 'no'
-            const licenseTxt = u.hasLicense ? 'Licensed' : 'None'
-            const date       = u.createdDateTime ? u.createdDateTime.split('T')[0] : 'N/A'
-            const dept       = u.department || '<span style="color:var(--text-3)">—</span>'
-            return '<tr>' +
-                '<td>' + u.displayName + '</td>' +
-                '<td class="mono secondary">' + u.userPrincipalName + '</td>' +
-                '<td><span class="tag ' + typeCls + '">' + u.userType + '</span></td>' +
-                '<td class="secondary">' + dept + '</td>' +
-                '<td><span class="tag ' + licenseCls + '">' + licenseTxt + '</span></td>' +
-                '<td><span class="badge ' + statusCls + '"><span class="badge-dot"></span>' + statusTxt + '</span></td>' +
-                '<td class="secondary">' + date + '</td>' +
-                '</tr>'
-        }).join('')
+        document.getElementById('userCount').textContent = 'Showing '+users.length+' user'+(users.length!==1?'s':'');
+        document.getElementById('userTable').innerHTML = users.map(function(u) {
+            var date = u.createdDateTime?u.createdDateTime.split('T')[0]:'N/A';
+            var dept = u.department||'<span style="color:var(--text-3)">\u2014</span>';
+            return '<tr><td>'+u.displayName+'</td><td class="mono secondary">'+u.userPrincipalName+'</td>'+
+                '<td><span class="tag '+(u.userType==='Guest'?'guest':'internal')+'">'+u.userType+'</span></td>'+
+                '<td class="secondary">'+dept+'</td>'+
+                '<td><span class="tag '+(u.hasLicense?'yes':'no')+'">'+(u.hasLicense?'Licensed':'None')+'</span></td>'+
+                '<td><span class="badge '+(u.accountEnabled?'enabled':'disabled')+'"><span class="badge-dot"></span>'+(u.accountEnabled?'Enabled':'Disabled')+'</span></td>'+
+                '<td class="secondary">'+date+'</td></tr>';
+        }).join('');
     }
 
-    /* ── DISABLED USERS ── */
     function renderDisabled() {
-        const disabled = allUsers.filter(u => !u.accountEnabled)
-        const withLic  = disabled.filter(u => u.hasLicense).length
-        const internal = disabled.filter(u => u.userType === 'Member').length
-        const guests   = disabled.filter(u => u.userType === 'Guest').length
-
-        document.getElementById('disabledTotal').textContent       = disabled.length
-        document.getElementById('disabledWithLicense').textContent = withLic
-        document.getElementById('disabledInternal').textContent    = internal
-        document.getElementById('disabledGuests').textContent      = guests
-
-        renderDisabledTable(disabled)
+        var disabled = allUsers.filter(function(u){return !u.accountEnabled;});
+        document.getElementById('disabledTotal').textContent = disabled.length;
+        document.getElementById('disabledWithLicense').textContent = disabled.filter(function(u){return u.hasLicense;}).length;
+        document.getElementById('disabledInternal').textContent = disabled.filter(function(u){return u.userType==='Member';}).length;
+        document.getElementById('disabledGuests').textContent = disabled.filter(function(u){return u.userType==='Guest';}).length;
+        renderDisabledTable(disabled);
     }
-
-    function getDisabledSeverity(u) {
-        if (!u.accountEnabled && u.hasLicense) return 'critical'
-        if (!u.accountEnabled && u.userType === 'Member') return 'high'
-        return 'medium'
-    }
-
-    function getDisabledIssue(u) {
-        if (u.hasLicense) return 'Disabled account retains active license'
-        if (u.userType === 'Member') return 'Disabled internal account'
-        return 'Disabled guest account'
-    }
-
+    function getDisabledSeverity(u) { return !u.accountEnabled&&u.hasLicense?'critical':u.userType==='Member'?'high':'medium'; }
+    function getDisabledIssue(u) { return u.hasLicense?'Disabled account retains active license':u.userType==='Member'?'Disabled internal account':'Disabled guest account'; }
     function renderDisabledTable(users) {
-        document.getElementById('disabledCount').textContent = 'Showing ' + users.length + ' disabled user' + (users.length !== 1 ? 's' : '')
-        document.getElementById('disabledTable').innerHTML = users.map(u => {
-            const sev     = getDisabledSeverity(u)
-            const issue   = getDisabledIssue(u)
-            const typeCls = u.userType === 'Guest' ? 'guest' : 'internal'
-            const licCls  = u.hasLicense ? 'yes' : 'no'
-            const licTxt  = u.hasLicense ? 'Licensed' : 'None'
-            const dept    = u.department || '<span style="color:var(--text-3)">—</span>'
-            return '<tr>' +
-                '<td><span class="severity-badge ' + sev + '">' + sev.toUpperCase() + '</span></td>' +
-                '<td>' + u.displayName + '</td>' +
-                '<td class="mono secondary">' + u.userPrincipalName + '</td>' +
-                '<td><span class="tag ' + typeCls + '">' + u.userType + '</span></td>' +
-                '<td class="secondary">' + dept + '</td>' +
-                '<td><span class="tag ' + licCls + '">' + licTxt + '</span></td>' +
-                '<td class="secondary" style="color:var(--text)">' + issue + '</td>' +
-                '</tr>'
-        }).join('')
+        document.getElementById('disabledCount').textContent = 'Showing '+users.length+' disabled user'+(users.length!==1?'s':'');
+        document.getElementById('disabledTable').innerHTML = users.map(function(u) {
+            var dept = u.department||'<span style="color:var(--text-3)">\u2014</span>';
+            return '<tr><td><span class="severity-badge '+getDisabledSeverity(u)+'">'+getDisabledSeverity(u).toUpperCase()+'</span></td>'+
+                '<td>'+u.displayName+'</td><td class="mono secondary">'+u.userPrincipalName+'</td>'+
+                '<td><span class="tag '+(u.userType==='Guest'?'guest':'internal')+'">'+u.userType+'</span></td>'+
+                '<td class="secondary">'+dept+'</td>'+
+                '<td><span class="tag '+(u.hasLicense?'yes':'no')+'">'+(u.hasLicense?'Licensed':'None')+'</span></td>'+
+                '<td class="secondary">'+getDisabledIssue(u)+'</td></tr>';
+        }).join('');
     }
-
     function filterDisabled(filter, btn) {
-        currentDisabledFilter = filter
-        document.querySelectorAll('#page-disabled .filter-pill').forEach(b => b.classList.remove('active'))
-        btn.classList.add('active')
-        document.getElementById('disabledSearch').value = ''
-        applyDisabledFilter()
+        currentDisabledFilter = filter;
+        document.querySelectorAll('#page-disabled .filter-pill').forEach(function(b){b.classList.remove('active');});
+        btn.classList.add('active');
+        document.getElementById('disabledSearch').value = '';
+        applyDisabledFilter();
     }
-
-    function searchDisabled() {
-        applyDisabledFilter()
-    }
-
+    function searchDisabled() { applyDisabledFilter(); }
     function applyDisabledFilter() {
-        const q      = document.getElementById('disabledSearch').value.toLowerCase()
-        let filtered = allUsers.filter(u => !u.accountEnabled)
-
-        if (currentDisabledFilter === 'licensed') filtered = filtered.filter(u => u.hasLicense)
-        if (currentDisabledFilter === 'internal') filtered = filtered.filter(u => u.userType === 'Member')
-        if (currentDisabledFilter === 'guest')    filtered = filtered.filter(u => u.userType === 'Guest')
-
-        if (q) filtered = filtered.filter(u =>
-            u.displayName.toLowerCase().includes(q) ||
-            u.userPrincipalName.toLowerCase().includes(q)
-        )
-
-        renderDisabledTable(filtered)
+        var q = document.getElementById('disabledSearch').value.toLowerCase();
+        var f = allUsers.filter(function(u){return !u.accountEnabled;});
+        if (currentDisabledFilter==='licensed') f=f.filter(function(u){return u.hasLicense;});
+        if (currentDisabledFilter==='internal') f=f.filter(function(u){return u.userType==='Member';});
+        if (currentDisabledFilter==='guest') f=f.filter(function(u){return u.userType==='Guest';});
+        if (q) f=f.filter(function(u){return u.displayName.toLowerCase().includes(q)||u.userPrincipalName.toLowerCase().includes(q);});
+        renderDisabledTable(f);
     }
 
-    /* ── DRIFT ── */
     function renderDrift() {
-        const d    = driftData
-        const prev = d.reportMetadata.previousSnapshot.replace('identity-snapshot-','').replace('.json','')
-        const curr = d.reportMetadata.currentSnapshot.replace('identity-snapshot-','').replace('.json','')
-
-        document.getElementById('driftPeriod').innerHTML =
-            'Period: <span class="date">' + prev + '</span><span class="arrow"> → </span><span class="date">' + curr + '</span>'
-
-        function fmt(n) { return (n > 0 ? '+' : '') + n }
-        function arrowFor(n) { return n > 0 ? '↑' : n < 0 ? '↓' : '' }
-        function deltaClass(v, hib) {
-            if (v === 0) return 'neutral'
-            if (hib) return v > 0 ? 'up-bad' : 'up-good'
-            return v > 0 ? 'up-good' : 'down-bad'
-        }
-
-        const sd = d.summaryDelta
-        const fields = [
-            { id: 'deltaTotalUsers', v: sd.totalUsers,      hib: false },
-            { id: 'deltaDisabled',   v: sd.disabledUsers,    hib: true  },
-            { id: 'deltaGuests',     v: sd.guestUsers,       hib: true  },
-            { id: 'deltaScore',      v: sd.governanceScore,  hib: false },
-        ]
-
-        fields.forEach(f => {
-            const el    = document.getElementById(f.id)
-            const arrow = arrowFor(f.v)
-            el.innerHTML = fmt(f.v) + (arrow ? ' <span class="delta-arrow">' + arrow + '</span>' : '')
-            el.className = 'delta-value ' + deltaClass(f.v, f.hib)
-        })
-
-        const obs = d.driftObservations
-        document.getElementById('driftObsCount').textContent = '(' + obs.length + ')'
-        document.getElementById('driftObservations').innerHTML = obs.map(o => {
-            const iconSvg = '<svg class="obs-icon ' + o.severity + '" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>'
-            return '<div class="obs-item">' + iconSvg +
-                '<div class="obs-body">' +
-                    '<div class="obs-severity ' + o.severity + '">' + o.severity + '</div>' +
-                    '<div class="obs-message">' + o.message + '</div>' +
-                '</div></div>'
-        }).join('')
-
+        var d = driftData;
+        var prev = d.reportMetadata.previousSnapshot.replace('identity-snapshot-','').replace('.json','');
+        var curr = d.reportMetadata.currentSnapshot.replace('identity-snapshot-','').replace('.json','');
+        document.getElementById('driftPeriod').innerHTML = 'Period: <span class="date">'+prev+'</span> \u2192 <span class="date">'+curr+'</span>';
+        function fmt(n){return (n>0?'+':'')+n;}
+        function arrowFor(n){return n>0?'\u2191':n<0?'\u2193':'';}
+        function dc(v,hib){if(v===0)return 'neutral';return hib?(v>0?'up-bad':'up-good'):(v>0?'up-good':'down-bad');}
+        var sd = d.summaryDelta;
+        [{id:'deltaTotalUsers',v:sd.totalUsers,hib:false},{id:'deltaDisabled',v:sd.disabledUsers,hib:true},{id:'deltaGuests',v:sd.guestUsers,hib:true},{id:'deltaScore',v:sd.governanceScore,hib:false}].forEach(function(f){
+            var el = document.getElementById(f.id);
+            var arrow = arrowFor(f.v);
+            el.innerHTML = fmt(f.v)+(arrow?' <span class="delta-arrow">'+arrow+'</span>':'');
+            el.className = 'delta-value '+dc(f.v,f.hib);
+        });
+        var obs = d.driftObservations;
+        document.getElementById('driftObsCount').textContent = '('+obs.length+')';
+        document.getElementById('driftObservations').innerHTML = obs.map(function(o){
+            return '<div class="obs-item"><svg class="obs-icon '+o.severity+'" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1"/></svg>'+
+                '<div class="obs-body"><div class="obs-severity '+o.severity+'">'+o.severity+'</div><div class="obs-message">'+o.message+'</div></div></div>';
+        }).join('');
         document.getElementById('newUsersList').innerHTML = d.userDelta.newUsers.length
-            ? d.userDelta.newUsers.map(u =>
-                '<div class="drift-list-item"><div class="drift-indicator add">+</div>' + u + '</div>').join('')
-            : '<div class="empty-state">No new users this period</div>'
-
+            ? d.userDelta.newUsers.map(function(u){return '<div class="drift-list-item"><div class="drift-indicator add">+</div>'+u+'</div>';}).join('')
+            : '<div class="empty-state">No new users this period</div>';
         document.getElementById('newlyDisabledList').innerHTML = d.userDelta.newlyDisabled.length
-            ? d.userDelta.newlyDisabled.map(u =>
-                '<div class="drift-list-item"><div class="drift-indicator warning">!</div>' + u + '</div>').join('')
-            : '<div class="empty-state">No newly disabled accounts</div>'
+            ? d.userDelta.newlyDisabled.map(function(u){return '<div class="drift-list-item"><div class="drift-indicator warning">!</div>'+u+'</div>';}).join('')
+            : '<div class="empty-state">No newly disabled accounts</div>';
     }
 
-    /* ── PRIVILEGED ── */
     function renderPrivileged() {
-        const initials = n => n ? n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() : '?'
-        document.getElementById('privilegedRoles').innerHTML = snapshotData.directoryRoles.map(role => {
-            const members      = Array.isArray(role.members) ? role.members : [role.members]
-            const validMembers = members.filter(m => m && m.userPrincipalName)
-            return '<div class="role-card">' +
-                '<div class="role-header">' +
-                    '<div class="role-name">' + role.roleName + '</div>' +
-                    '<div class="role-count">' + validMembers.length + ' member' + (validMembers.length !== 1 ? 's' : '') + '</div>' +
-                '</div>' +
-                (validMembers.length > 0
-                    ? validMembers.map(m =>
-                        '<div class="member-row">' +
-                            '<div class="member-initials">' + initials(m.displayName) + '</div>' +
-                            '<div>' +
-                                '<div class="member-name">' + m.displayName + '</div>' +
-                                '<div class="member-upn">' + m.userPrincipalName + '</div>' +
-                            '</div>' +
-                        '</div>').join('')
-                    : '<div class="no-members">No members assigned</div>'
-                ) + '</div>'
-        }).join('')
+        function ini(n){return n?n.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase():'?';}
+        document.getElementById('privilegedRoles').innerHTML = snapshotData.directoryRoles.map(function(role) {
+            var members = Array.isArray(role.members)?role.members:[role.members];
+            var valid = members.filter(function(m){return m&&m.userPrincipalName;});
+            return '<div class="role-card"><div class="role-header"><div class="role-name">'+role.roleName+'</div>'+
+                '<div class="role-count">'+valid.length+' member'+(valid.length!==1?'s':'')+'</div></div>'+
+                (valid.length>0?valid.map(function(m){return '<div class="member-row"><div class="member-initials">'+ini(m.displayName)+'</div>'+
+                '<div><div class="member-name">'+m.displayName+'</div><div class="member-upn">'+m.userPrincipalName+'</div></div></div>';}).join('')
+                :'<div class="no-members">No members assigned</div>')+
+            '</div>';
+        }).join('');
     }
 
-    /* ── NAV ── */
     function showPage(page, btn) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'))
-        document.getElementById('page-' + page).classList.add('active')
-        if (btn) btn.classList.add('active')
+        document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+        document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+        document.getElementById('page-'+page).classList.add('active');
+        if (btn) btn.classList.add('active');
+        currentPage = page;
+        var names = {overview:'Overview',drift:'Drift Report',privileged:'Privileged Access',users:'All Users',disabled:'Disabled Users',trends:'Trends'};
+        document.getElementById('copilotContextLabel').textContent = 'Viewing: '+(names[page]||page);
+        updateSuggestedPrompts();
+        if (page==='trends') renderTrendCharts();
     }
 
-    loadData()
+    loadData();
 </script>
-
 </body>
 </html>
