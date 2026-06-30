@@ -54,12 +54,12 @@ The AI Copilot answers all of these in plain English, grounded strictly in your 
 ### Identity Overview
 - Governance health score (0-100) with transparent breakdown showing exact deductions
 - Total, active, disabled, internal, guest, privileged, and licensed user counts
-- Findings summary bar (Critical, High, Medium, Total) — clickable to filter
+- Findings summary bar (Critical, High, Medium, Total), clickable to filter
 - Governance observations with severity filter and clickable detail panels
 
 ### AI Identity Risk Analysis
 - Auto-generated risk analysis on page load using Claude
-- Grounded strictly in snapshot data — no hallucination
+- Grounded strictly in snapshot data, no hallucination
 - Clickable finding detail panels with risk level, business impact, remediation steps, and Microsoft best practice guidance
 
 ### AI Identity Copilot
@@ -119,7 +119,7 @@ The AI Copilot answers all of these in plain English, grounded strictly in your 
 ### AI Identity Risk Analysis
 ![AI Risk Analysis](screenshots/26-dashboard-ai-risk-card.png)
 
-### AI Copilot Chat
+### AI Copilot Chat On The Right Side
 ![Copilot Chat](screenshots/28-dashboard-copilot-chat.png)
 
 ### Governance Score Breakdown
@@ -268,9 +268,7 @@ Open `http://localhost:3000/dashboard/index.html`
 
 - [Identity Lifecycle Automation](https://github.com/SlyCyberLab/IdentityLifecycleAutomation) — The automation layer this project builds on top of
 
-## Blog Post
-
-Coming soon on [blog.slytech.us](https://blog.slytech.us)
+## Blog Post on [blog.slytech.us](https://blog.slytech.us/blog/identity-governance-portal/)
 
 ---
 
